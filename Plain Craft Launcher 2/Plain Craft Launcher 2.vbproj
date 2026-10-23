@@ -264,6 +264,7 @@
     </Compile>
     <Compile Include="Pages\PageDownload\Resource\PageDownloadDataPack.xaml.vb">
       <DependentUpon>PageDownloadDataPack.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Pages\PageDownload\Resource\PageDownloadMap.xaml.vb">
       <DependentUpon>PageDownloadMap.xaml</DependentUpon>
     </Compile>
@@ -406,6 +407,7 @@
     </Compile>
     <Compile Include="Pages\PageSetup\PageSetupStorage.xaml.vb">
       <DependentUpon>PageSetupStorage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Pages\PageSetup\PageSetupSkin.xaml.vb">
       <DependentUpon>PageSetupSkin.xaml</DependentUpon>
     </Compile>
@@ -531,6 +533,9 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Pages\PageDownload\Resource\PageDownloadDataPack.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Pages\PageDownload\Resource\PageDownloadMap.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -572,8 +577,8 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Pages\PageLaunch\PageLoginAuthSkin.xaml">
-      <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Pages\PageLaunch\PageLoginMs.xaml">
       <SubType>Designer</SubType>
@@ -684,6 +689,9 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Pages\PageSetup\PageSetupStorage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Pages\PageSetup\PageSetupSkin.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -957,19 +965,15 @@
     <None Include="Resources\lwjgl-unsafe-agent.jar" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\MeloongCore\Shared\MeloongCore.csproj">
-      <Project>{d22bbf3c-2177-0208-4e29-8466aa41ac6f}</Project>
-      <Name>MeloongCore</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\MeloongCore\Wpf\MeloongCore.Wpf.csproj">
-      <Project>{2dffe2a0-1101-816b-d240-f644b2d74a68}</Project>
-      <Name>MeloongCore.Wpf</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\PCLCS\PCLCS.csproj">
-      <Project>{32de4aaf-f4d6-42c5-9604-19236de96c69}</Project>
-      <Name>PCLCS</Name>
-      <Private>True</Private>
-    </ProjectReference>
+    <Reference Include="MeloongCore">
+      <HintPath>..\MeloongCore\Shared\bin\MeloongCore.dll</HintPath>
+    </Reference>
+    <Reference Include="MeloongCore.Wpf">
+      <HintPath>..\MeloongCore\Wpf\bin\MeloongCore.Wpf.dll</HintPath>
+    </Reference>
+    <Reference Include="PCLCS">
+      <HintPath>..\PCLCS\bin\PCLCS.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\PCLCS\bin\PCLCS.dll">
@@ -994,5 +998,14 @@
     <Resource Include="Images\Heads\HerobrineXia.png" />
 
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
+    <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
+  <Import Project="$(WINDIR)\Microsoft.NET\Framework64\v4.0.30319\Microsoft.WinFX.targets" Condition="Exists(&apos;$(WINDIR)\Microsoft.NET\Framework64\v4.0.30319\Microsoft.WinFX.targets&apos;)" />
+  <UsingTask TaskName="Microsoft.Build.Tasks.Windows.MarkupCompilePass1" AssemblyFile="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\PresentationBuildTasks.dll" Override="true" />
+  <UsingTask TaskName="Microsoft.Build.Tasks.Windows.MarkupCompilePass2" AssemblyFile="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\PresentationBuildTasks.dll" Override="true" />
+  <UsingTask TaskName="Microsoft.Build.Tasks.Windows.ResourcesGenerator" AssemblyFile="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\PresentationBuildTasks.dll" Override="true" />
+  <UsingTask TaskName="Microsoft.Build.Tasks.Windows.FileClassifier" AssemblyFile="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\PresentationBuildTasks.dll" Override="true" />
+  <UsingTask TaskName="Microsoft.Build.Tasks.Windows.GenerateTemporaryTargetAssembly" AssemblyFile="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\PresentationBuildTasks.dll" Override="true" />
+  <UsingTask TaskName="Microsoft.Build.Tasks.Windows.UidManager" AssemblyFile="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\PresentationBuildTasks.dll" Override="true" />
+  <UsingTask TaskName="Microsoft.Build.Tasks.Windows.MergeLocalizationDirectives" AssemblyFile="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\PresentationBuildTasks.dll" Override="true" />
+  <UsingTask TaskName="Microsoft.Build.Tasks.Windows.GetWinFXPath" AssemblyFile="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\PresentationBuildTasks.dll" Override="true" />
 </Project>
