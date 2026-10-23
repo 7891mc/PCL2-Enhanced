@@ -3,7 +3,7 @@ Imports System.Windows
 Public Class PageOtherTest
 
     Private Sub BtnOpenData_Click(Sender As Object, E As RoutedEventArgs) Handles BtnOpenData.Click
-        OpenExplorer(PathBase)
+        OpenExplorer(Paths.AppDataThenName)
         Hint("已打开 PCL 数据目录。", HintType.Blue)
     End Sub
 
