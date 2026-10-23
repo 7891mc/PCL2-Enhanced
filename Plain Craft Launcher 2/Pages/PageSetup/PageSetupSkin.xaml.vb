@@ -240,7 +240,7 @@ Public Class PageSetupSkin
 
     ''' <summary>保存画布为 PNG。</summary>
     Private Sub BtnSave_Click(Sender As Object, E As RoutedEventArgs) Handles BtnSave.Click
-        Dim FileName As String = Dialogs.SaveFile("保存皮肤", "Skin.png", PathTemp, {({"png"}, "PNG 图片")})
+        Dim FileName As String = Dialogs.SaveFile("保存皮肤", "Skin.png", PathTemp, {("png", "PNG 图片")})
         If FileName IsNot Nothing AndAlso FileName <> "" Then
             SavePng(FileName)
             Hint("皮肤已保存到：" & FileName, HintType.Green)
@@ -335,7 +335,7 @@ Public Class PageSetupSkin
         Next
     End Sub
 
-    Private Sub Armor_Checked(Sender As Object, E As RoutedEventArgs) Handles BtnArmorNone.Checked, BtnArmorIron.Checked, BtnArmorGold.Checked, BtnArmorDiamond.Checked
+    Private Sub Armor_Check(Sender As Object, raiseByMouse As Boolean) Handles BtnArmorNone.Check, BtnArmorIron.Check, BtnArmorGold.Check, BtnArmorDiamond.Check
         Dim Btn = TryCast(Sender, MyRadioButton)
         If Btn IsNot Nothing Then
             ArmorMode = CInt(Btn.Tag)

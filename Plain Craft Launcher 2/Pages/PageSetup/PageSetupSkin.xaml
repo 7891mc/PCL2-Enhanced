@@ -1,4 +1,4 @@
-<Grid x:Class="PageSetupSkin"
+<local:MyPageRight x:Class="PageSetupSkin"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -47,7 +47,7 @@
                     <StackPanel Margin="90,0,0,0">
                         <TextBlock Text="选择盔甲类型，可在左侧预览穿戴后的效果（仅视觉预览）" FontSize="12" Opacity="0.6" TextWrapping="Wrap" Margin="0,0,0,10" />
                         <WrapPanel>
-                            <local:MyRadioButton x:Name="BtnArmorNone" Text="无盔甲" IsChecked="True" Tag="0" Margin="0,0,12,6" />
+                            <local:MyRadioButton x:Name="BtnArmorNone" Text="无盔甲" Checked="True" Tag="0" Margin="0,0,12,6" />
                             <local:MyRadioButton x:Name="BtnArmorIron" Text="铁甲" Tag="1" Margin="0,0,12,6" />
                             <local:MyRadioButton x:Name="BtnArmorGold" Text="金甲" Tag="2" Margin="0,0,12,6" />
                             <local:MyRadioButton x:Name="BtnArmorDiamond" Text="钻甲" Tag="3" Margin="0,0,12,6" />
@@ -57,4 +57,4 @@
             </local:MyCard>
         </StackPanel>
     </ScrollViewer>
-</Grid>
+</local:MyPageRight>
