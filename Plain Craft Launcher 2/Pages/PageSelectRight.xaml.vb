@@ -19,6 +19,86 @@ Public Class PageSelectRight
     ''' 是否显示隐藏的 Minecraft 版本。
     ''' </summary>
     Public ShowHidden As Boolean = False
+    ''' <summary>
+    ''' 当前的分组筛选（空字符串 = 全部，&lt;未分组&gt; = 未分组）。
+    ''' </summary>
+    Public GroupFilter As String = ""
+
+    ''' <summary>
+    ''' 判断实例是否通过分组筛选。
+    ''' </summary>
+    Private Function PassGroupFilter(Instance As McInstance) As Boolean
+        If GroupFilter = "" Then Return True
+        Dim GroupName = ReadIni(Instance.PathVersion & "PCL\Setup.ini", "Group", "")
+        If GroupFilter = "<未分组>" Then Return GroupName = ""
+        Return GroupName = GroupFilter
+    End Function
+
+    ''' <summary>
+    ''' 分组筛选变化后刷新列表 UI。
+    ''' </summary>
+    Private Sub RefreshGroupFilter()
+        If McInstanceListLoader.State = LoadState.Loading Then Return
+        McInstanceListUI(Nothing)
+    End Sub
+
+    ''' <summary>
+    ''' 设置实例分组（供版本列表行按钮调用）。
+    ''' </summary>
+    Public Shared Sub SetInstanceGroup(Instance As McInstance)
+        Dim CurrentGroup = ReadIni(Instance.PathVersion & "PCL\Setup.ini", "Group", "")
+        Dim Input = MyMsgBoxInput("请输入该实例的分组名称（留空表示未分组）：", , CurrentGroup)
+        If Input Is Nothing Then Return
+        WriteIni(Instance.PathVersion & "PCL\Setup.ini", "Group", Input)
+        McInstanceListForceRefresh = True
+        LoaderFolderRun(McInstanceListLoader, McFolderSelected, LoaderFolderRunType.ForceRun, MaxDepth:=1, ExtraPath:="versions\")
+        Hint(If(Input = "", "已将该实例设为未分组", $"已将该实例加入分组「{Input}」"), HintType.Green)
+    End Sub
+
+    ''' <summary>
+    ''' 获取实例 mods 文件夹中的文件名列表。
+    ''' </summary>
+    Public Shared Function GetModFiles(Instance As McInstance) As List(Of String)
+        Dim Result As New List(Of String)
+        Try
+            Dim ModsFolder = Instance.PathIndie & "mods\"
+            If DirectoryUtils.Exists(ModsFolder) Then
+                For Each FileName In IO.Directory.EnumerateFiles(ModsFolder, "*.jar")
+                    Result.Add(IO.Path.GetFileName(FileName))
+                Next
+            End If
+        Catch ex As Exception
+            Logger.Warn(ex, "读取实例 Mod 列表失败")
+        End Try
+        Return Result
+    End Function
+
+    ''' <summary>
+    ''' 显示实例关系（与其他实例的共享 Mod，即简化版关系图）。
+    ''' </summary>
+    Public Shared Sub ShowInstanceRelation(Instance As McInstance)
+        Try
+            Dim Lines As New List(Of String)
+            Dim SharedTotal As Integer = 0
+            For Each Card As KeyValuePair(Of McInstanceCardType, List(Of McInstance)) In McInstanceList
+                For Each Other In Card.Value
+                    If PathUtils.IsSame(Other.PathVersion, Instance.PathVersion) Then Continue For
+                    Dim SharedMods = GetModFiles(Instance).Intersect(GetModFiles(Other)).Ordered().ToList()
+                    If SharedMods.Any Then
+                        SharedTotal += SharedMods.Count
+                        Lines.Add($"· {Other.Name}：共享 {SharedMods.Count} 个 Mod（{SharedMods.Take(5).Join("、")}" & If(SharedMods.Count > 5, " 等", "") & "）")
+                    End If
+                Next
+            Next
+            If Lines.Count = 0 Then
+                MyMsgBox($"实例「{Instance.Name}」未与其他实例共享任何 Mod。", "实例关系图", "确定")
+            Else
+                MyMsgBox($"实例「{Instance.Name}」共与其他 {Lines.Count} 个实例共享 {SharedTotal} 个 Mod：{vbCrLf}{Lines.Join(vbCrLf)}", "实例关系图（共享 Mod）", "确定")
+            End If
+        Catch ex As Exception
+            Logger.Error(ex, "显示实例关系失败", LogBehavior.Alert)
+        End Try
+    End Sub
 
 #Region "结果 UI 化"
 
@@ -27,10 +107,49 @@ Public Class PageSelectRight
             '加载 UI
             PanMain.Children.Clear()
 
+            '分组筛选条（存在分组时才显示）
+            Dim Groups As New List(Of String)
+            For Each GroupCard As KeyValuePair(Of McInstanceCardType, List(Of McInstance)) In McInstanceList
+                For Each GroupInstance In GroupCard.Value
+                    Dim GroupName = ReadIni(GroupInstance.PathVersion & "PCL\Setup.ini", "Group", "")
+                    If GroupName <> "" AndAlso Not Groups.Contains(GroupName) Then Groups.Add(GroupName)
+                Next
+            Next
+            Groups.Sort()
+            If Groups.Count > 0 Then
+                Dim FilterCard As New MyCard With {.Title = " ", .Margin = New Thickness(0, 0, 0, 15)}
+                Dim FilterStack As New StackPanel With {.Margin = New Thickness(14, 10, 14, 10), .Orientation = Orientation.Horizontal, .VerticalAlignment = VerticalAlignment.Top, .HorizontalAlignment = HorizontalAlignment.Left}
+                Dim BtnFilterAll As New MyRadioButton With {.Text = "全部", .ColorType = MyRadioButton.ColorState.Highlight, .Margin = New Thickness(2, 0, 2, 0), .Checked = (GroupFilter = ""), .Tag = ""}
+                AddHandler BtnFilterAll.Check,
+                Sub(s As MyRadioButton, raiseByMouse As Boolean)
+                    GroupFilter = If(s.Tag, "")
+                    RefreshGroupFilter()
+                End Sub
+                FilterStack.Children.Add(BtnFilterAll)
+                Dim BtnFilterNone As New MyRadioButton With {.Text = "未分组", .ColorType = MyRadioButton.ColorState.Highlight, .Margin = New Thickness(2, 0, 2, 0), .Checked = (GroupFilter = "<未分组>"), .Tag = "<未分组>"}
+                AddHandler BtnFilterNone.Check,
+                Sub(s As MyRadioButton, raiseByMouse As Boolean)
+                    GroupFilter = If(s.Tag, "")
+                    RefreshGroupFilter()
+                End Sub
+                FilterStack.Children.Add(BtnFilterNone)
+                For Each GroupName In Groups
+                    Dim BtnFilterGroup As New MyRadioButton With {.Text = GroupName, .ColorType = MyRadioButton.ColorState.Highlight, .Margin = New Thickness(2, 0, 2, 0), .Checked = (GroupFilter = GroupName), .Tag = GroupName}
+                    AddHandler BtnFilterGroup.Check,
+                    Sub(s As MyRadioButton, raiseByMouse As Boolean)
+                        GroupFilter = If(s.Tag, "")
+                        RefreshGroupFilter()
+                    End Sub
+                    FilterStack.Children.Add(BtnFilterGroup)
+                Next
+                FilterCard.Children.Add(FilterStack)
+                PanMain.Children.Add(FilterCard)
+            End If
+
             For Each Card As KeyValuePair(Of McInstanceCardType, List(Of McInstance)) In McInstanceList.ToArray
                 '确认是否为隐藏版本显示状态
                 If Card.Key = McInstanceCardType.Hidden Xor ShowHidden Then Continue For
-                Dim Instances = Card.Value.Where(Function(Instance) Not McInstanceLock.IsLocked(Instance)).ToList
+                Dim Instances = Card.Value.Where(Function(Instance) Not McInstanceLock.IsLocked(Instance) AndAlso PassGroupFilter(Instance)).ToList
                 If Not Instances.Any Then Continue For
 #Region "确认卡片名称"
                 Dim CardName As String = ""
@@ -140,6 +259,12 @@ Public Class PageSelectRight
         Dim BtnDel As New MyIconButton With {.LogoScale = 1.1, .Logo = Logo.IconButtonDelete}
         BtnDel.ToolTip = "删除"
         AddHandler BtnDel.Click, Sub() DeleteInstance(sender, Instance)
+        Dim BtnGroup As New MyIconButton With {.LogoScale = 1.1, .Logo = Logo.IconButtonEdit}
+        BtnGroup.ToolTip = "设置分组"
+        AddHandler BtnGroup.Click, Sub() SetInstanceGroup(Instance)
+        Dim BtnRelation As New MyIconButton With {.LogoScale = 1.1, .Logo = Logo.IconButtonList}
+        BtnRelation.ToolTip = "实例关系（共享 Mod）"
+        AddHandler BtnRelation.Click, Sub() ShowInstanceRelation(Instance)
         If Instance.State <> McInstance.McInstanceState.Error Then
             Dim BtnCont As New MyIconButton With {.LogoScale = 1.1, .Logo = Logo.IconButtonSetup}
             BtnCont.ToolTip = "设置"
@@ -153,13 +278,13 @@ Public Class PageSelectRight
                 PageInstanceLeft.Instance = Instance
                 FrmMain.PageChange(FormMain.PageType.InstanceSetup, 0)
             End Sub
-            sender.Buttons = {BtnStar, BtnDel, BtnCont}
+            sender.Buttons = {BtnStar, BtnGroup, BtnRelation, BtnDel, BtnCont}
         Else
             Dim BtnCont As New MyIconButton With {.LogoScale = 1.15, .Logo = Logo.IconButtonOpen}
             BtnCont.ToolTip = "打开文件夹"
             AddHandler BtnCont.Click, Sub() PageInstanceOverall.OpenInstanceFolder(Instance)
             AddHandler sender.MouseRightButtonUp, Sub() PageInstanceOverall.OpenInstanceFolder(Instance)
-            sender.Buttons = {BtnStar, BtnDel, BtnCont}
+            sender.Buttons = {BtnStar, BtnGroup, BtnRelation, BtnDel, BtnCont}
         End If
     End Sub
 

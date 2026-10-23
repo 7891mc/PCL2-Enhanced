@@ -215,6 +215,8 @@
     <Compile Include="Modules\Resource\ResourceProject.vb" />
     <Compile Include="Modules\Resource\ResourceVersion.vb" />
     <Compile Include="Modules\Resource\ResourceSearcher.vb" />
+    <Compile Include="Modules\Resource\ModLocalizer.vb" />
+    <Compile Include="Modules\Resource\ModDependencyResolver.vb" />
     <Compile Include="Modules\Minecraft\ModJava.vb" />
     <Compile Include="Modules\Resource\LocalResourceLoaders.vb" />
     <Compile Include="Modules\Minecraft\ModModpack.vb" />
@@ -262,6 +264,11 @@
     </Compile>
     <Compile Include="Pages\PageDownload\Resource\PageDownloadDataPack.xaml.vb">
       <DependentUpon>PageDownloadDataPack.xaml</DependentUpon>
+    <Compile Include="Pages\PageDownload\Resource\PageDownloadMap.xaml.vb">
+      <DependentUpon>PageDownloadMap.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\PageDownload\PageDownloadCart.xaml.vb">
+      <DependentUpon>PageDownloadCart.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pages\PageDownload\Resource\PageDownloadPack.xaml.vb">
       <DependentUpon>PageDownloadPack.xaml</DependentUpon>
@@ -313,6 +320,15 @@
     <Compile Include="Pages\PageInstance\PageInstanceExport.xaml.vb">
       <DependentUpon>PageInstanceExport.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Pages\PageInstance\PageInstanceBackup.xaml.vb">
+      <DependentUpon>PageInstanceBackup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\PageInstance\PageInstanceScreenshot.xaml.vb">
+      <DependentUpon>PageInstanceScreenshot.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\PageInstance\PageInstanceDataPack.xaml.vb">
+      <DependentUpon>PageInstanceDataPack.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Pages\PageInstance\PageInstanceLeft.xaml.vb">
       <DependentUpon>PageInstanceLeft.xaml</DependentUpon>
     </Compile>
@@ -335,6 +351,7 @@
     <Compile Include="Modules\Minecraft\ModDownload.vb" />
     <Compile Include="Modules\Minecraft\ModLaunch.vb" />
     <Compile Include="Modules\Minecraft\ModMinecraft.vb" />
+    <Compile Include="Modules\Minecraft\ModCleanroom.vb" />
     <Compile Include="Pages\PageOther\PageOtherTest.xaml.vb">
       <DependentUpon>PageOtherTest.xaml</DependentUpon>
     </Compile>
@@ -386,6 +403,11 @@
     </Compile>
     <Compile Include="Pages\PageSetup\PageSetupUI.xaml.vb">
       <DependentUpon>PageSetupUI.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\PageSetup\PageSetupStorage.xaml.vb">
+      <DependentUpon>PageSetupStorage.xaml</DependentUpon>
+    <Compile Include="Pages\PageSetup\PageSetupSkin.xaml.vb">
+      <DependentUpon>PageSetupSkin.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pages\PageSetup\SettingService.vb" />
     <Compile Include="Pages\PageSpeedLeft.xaml.vb">
@@ -509,6 +531,11 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Pages\PageDownload\Resource\PageDownloadDataPack.xaml">
+    <Page Include="Pages\PageDownload\Resource\PageDownloadMap.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Pages\PageDownload\PageDownloadCart.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -573,6 +600,18 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Pages\PageInstance\PageInstanceExport.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\PageInstance\PageInstanceBackup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\PageInstance\PageInstanceScreenshot.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\PageInstance\PageInstanceDataPack.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -641,6 +680,11 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Pages\PageSetup\PageSetupUI.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\PageSetup\PageSetupStorage.xaml">
+    <Page Include="Pages\PageSetup\PageSetupSkin.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

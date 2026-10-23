@@ -1,0 +1,15 @@
+<local:MyPageRight
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:PCL" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    mc:Ignorable="d" x:Class="PageSetupStorage"
+    PanScroll="PanBack">
+    <Grid x:Name="PanAllBack">
+        <local:MyScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" x:Name="PanBack">
+            <StackPanel Margin="25,10,25,65">
+                <local:MyHint Margin="0,15,0,0" Text="存储管理：查看各文件夹占用空间，可打开所在位置或清理缓存。清理操作会删除对应文件夹中的全部内容，请谨慎使用。" />
+                <StackPanel x:Name="PanList" Margin="0,15,0,0" />
+            </StackPanel>
+        </local:MyScrollViewer>
+    </Grid>
+</local:MyPageRight>

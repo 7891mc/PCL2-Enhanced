@@ -4,6 +4,10 @@ Public Class PageInstanceMod
 #Region "初始化"
 
     Private IsLoad As Boolean = False
+    ''' <summary>
+    ''' 当前版本的收藏 Mod 名称缓存。
+    ''' </summary>
+    Private FavoritesCache As New List(Of String)
     Public Sub PageOther_Loaded() Handles Me.Loaded
 
         If FrmMain.PageLast.Page <> FormMain.PageType.ResourceDetail Then PanBack.ScrollToHome()
@@ -86,6 +90,7 @@ Public Class PageInstanceMod
             End If
             '修改缓存
             ModItems.Clear()
+            FavoritesCache = GetFavoriteNames()
             For Each ModEntity As LocalResourceFile In LocalResourceLoader.Output
                 ModItems(ModEntity.EnabledName) = McModListItem(ModEntity)
             Next
@@ -110,6 +115,9 @@ Public Class PageInstanceMod
         AddHandler sender.Changed, AddressOf CheckChanged
         AddHandler sender.Click, Sub(ss As MyLocalModItem, ee As EventArgs) ss.Checked = Not ss.Checked
         '图标按钮
+        Dim BtnFavorite As New MyIconButton With {.LogoScale = 1.05, .Logo = Logo.IconButtonLikeFill, .Tag = sender, .Opacity = If(FavoritesCache.Contains(sender.Entry.EnabledName), 1, 0.4)}
+        BtnFavorite.ToolTip = If(FavoritesCache.Contains(sender.Entry.EnabledName), "取消收藏", "收藏")
+        AddHandler BtnFavorite.Click, AddressOf Favorite_Click
         Dim BtnOpen As New MyIconButton With {.LogoScale = 1.05, .Logo = Logo.IconButtonOpen, .Tag = sender}
         BtnOpen.ToolTip = "打开文件位置"
         AddHandler BtnOpen.Click, AddressOf Open_Click
@@ -123,7 +131,7 @@ Public Class PageInstanceMod
         Dim BtnED As New MyIconButton With {.LogoScale = 1, .Logo = If(sender.Entry.IsEnabled, Logo.IconButtonStop, Logo.IconButtonCheck), .Tag = sender}
         BtnED.ToolTip = If(sender.Entry.IsEnabled, "禁用", "启用")
         AddHandler BtnED.Click, AddressOf ED_Click
-        sender.Buttons = {BtnCont, BtnOpen, BtnED, BtnDelete}
+        sender.Buttons = {BtnFavorite, BtnCont, BtnOpen, BtnED, BtnDelete}
     End Sub
 
     ''' <summary>
@@ -340,6 +348,42 @@ Install:
         FrmMain.PageChange(FormMain.PageType.Download, FormMain.PageSubType.DownloadMod)
     End Sub
 
+    ''' <summary>
+    ''' 汉化选中的 Mod（未选择时处理全部）。
+    ''' </summary>
+    Private Sub BtnManageLocalize_Click(sender As Object, e As MouseButtonEventArgs) Handles BtnManageLocalize.Click
+        Try
+            Dim TargetMods = LocalResourceLoader.Output.Where(Function(m) SelectedMods.Contains(m.EnabledName)).ToList
+            If Not TargetMods.Any Then TargetMods = LocalResourceLoader.Output.ToList
+            If Not TargetMods.Any Then
+                Hint("当前版本没有 Mod 可以汉化", HintType.Red)
+                Return
+            End If
+            If MyMsgBox($"将为 {TargetMods.Count} 个 Mod 获取简体中文汉化（来源：CFPA 汉化项目），并以资源包形式应用到版本 {PageInstanceLeft.Instance.Name}。{vbCrLf}汉化不会修改 Mod 文件本身，下次启动游戏即可生效。", "模组汉化", "开始汉化", "取消") = 2 Then Return
+            ModLocalizer.LocalizeMods(PageInstanceLeft.Instance, TargetMods)
+        Catch ex As Exception
+            Logger.Warn(ex, "初始化模组汉化失败")
+        End Try
+    End Sub
+
+    ''' <summary>
+    ''' 一键下载选中的 Mod 缺失的前置（未选择时处理全部）。
+    ''' </summary>
+    Private Sub BtnManageDependency_Click(sender As Object, e As MouseButtonEventArgs) Handles BtnManageDependency.Click
+        Try
+            Dim TargetMods = LocalResourceLoader.Output.Where(Function(m) SelectedMods.Contains(m.EnabledName)).ToList
+            If Not TargetMods.Any Then TargetMods = LocalResourceLoader.Output.ToList
+            If Not TargetMods.Any Then
+                Hint("当前版本没有 Mod 可以解析前置", HintType.Red)
+                Return
+            End If
+            If MyMsgBox($"将解析 {TargetMods.Count} 个 Mod 的前置依赖（来源：Modrinth），并自动下载缺失的前置到版本 {PageInstanceLeft.Instance.Name} 的 Mod 文件夹。{vbCrLf}已存在的前置会跳过，不会重复下载。", "下载模组前置", "开始下载", "取消") = 2 Then Return
+            ModDependencyResolver.ResolveDependencies(PageInstanceLeft.Instance, TargetMods)
+        Catch ex As Exception
+            Logger.Warn(ex, "初始化模组前置下载失败")
+        End Try
+    End Sub
+
 #End Region
 
 #Region "选择"
@@ -408,6 +452,8 @@ Install:
                     BtnFilterEnabled.Checked = True
                 Case FilterType.Disabled
                     BtnFilterDisabled.Checked = True
+                Case FilterType.Favorite
+                    BtnFilterFavorite.Checked = True
                 Case Else
                     BtnFilterCanUpdate.Checked = True
             End Select
@@ -419,6 +465,7 @@ Install:
         Enabled = 1
         Disabled = 2
         CanUpdate = 3
+        Favorite = 4
     End Enum
 
     ''' <summary>
@@ -434,15 +481,64 @@ Install:
                 Return Not CheckingMod.IsEnabled
             Case FilterType.CanUpdate
                 Return CheckingMod.HasUpdate
+            Case FilterType.Favorite
+                Return FavoritesCache.Contains(CheckingMod.EnabledName)
             Case Else
                 Return False
         End Select
     End Function
 
     '点击筛选项触发的改变
-    Private Sub ChangeFilter(sender As MyRadioButton, raiseByMouse As Boolean) Handles BtnFilterAll.Check, BtnFilterCanUpdate.Check, BtnFilterDisabled.Check, BtnFilterEnabled.Check
+    Private Sub ChangeFilter(sender As MyRadioButton, raiseByMouse As Boolean) Handles BtnFilterAll.Check, BtnFilterCanUpdate.Check, BtnFilterDisabled.Check, BtnFilterEnabled.Check, BtnFilterFavorite.Check
         Filter = sender.Tag
         RefreshUI()
+    End Sub
+
+    '收藏夹
+    Private Function GetFavoriteFile() As String
+        Return PageInstanceLeft.Instance.PathVersion & "PCL\ModFavorites.txt"
+    End Function
+    Private Function GetFavoriteNames() As List(Of String)
+        Dim Result As New List(Of String)
+        Try
+            If IO.File.Exists(GetFavoriteFile()) Then
+                For Each Line In IO.File.ReadAllLines(GetFavoriteFile())
+                    If Not String.IsNullOrEmpty(Line.Trim()) AndAlso Not Result.Contains(Line.Trim()) Then Result.Add(Line.Trim())
+                Next
+            End If
+        Catch ex As Exception
+            Logger.Warn(ex, "读取模组收藏失败")
+        End Try
+        Return Result
+    End Function
+    Private Sub SaveFavorites(Names As List(Of String))
+        Try
+            DirectoryUtils.Create(PageInstanceLeft.Instance.PathVersion & "PCL\")
+            IO.File.WriteAllLines(GetFavoriteFile(), Names)
+        Catch ex As Exception
+            Logger.Warn(ex, "保存模组收藏失败")
+        End Try
+    End Sub
+    Private Sub Favorite_Click(sender As MyIconButton, e As EventArgs)
+        Try
+            Dim Item = TryCast(sender.Tag, MyLocalModItem)
+            If Item Is Nothing OrElse Item.Entry Is Nothing Then Return
+            If FavoritesCache.Contains(Item.Entry.EnabledName) Then
+                FavoritesCache.Remove(Item.Entry.EnabledName)
+                sender.Opacity = 0.4
+                sender.ToolTip = "收藏"
+            Else
+                FavoritesCache.Add(Item.Entry.EnabledName)
+                sender.Opacity = 1
+                sender.ToolTip = "取消收藏"
+            End If
+            SaveFavorites(FavoritesCache)
+            '若正在按收藏筛选，取消收藏后需要刷新列表
+            If Filter = FilterType.Favorite Then RefreshUI()
+            RefreshBars()
+        Catch ex As Exception
+            Logger.Warn(ex, "更改模组收藏状态失败")
+        End Try
     End Sub
 
 #End Region

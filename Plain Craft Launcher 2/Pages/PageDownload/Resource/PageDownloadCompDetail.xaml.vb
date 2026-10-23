@@ -547,6 +547,26 @@ GroupDone:
     Private Sub BtnIntroCopy_Click(sender As Object, e As EventArgs) Handles BtnIntroCopy.Click
         ClipboardSet(ResourceItem.LabTitle.Text & ResourceItem.LabTitleRaw.Text)
     End Sub
+    Private Sub BtnIntroCart_Click(sender As Object, e As EventArgs) Handles BtnIntroCart.Click
+        Try
+            '将当前资源的所有可选版本加入购物车（按 Id 去重）
+            Dim Added As Integer = 0
+            Dim Seen As New HashSet(Of String)
+            For Each Version In GetResults()
+                If Version Is Nothing OrElse Version.Id = "" OrElse Seen.Contains(Version.Id) Then Continue For
+                Seen.Add(Version.Id)
+                PageDownloadCart.AddToCart(Version)
+                Added += 1
+            Next
+            If Added = 0 Then
+                Hint("暂无可加入购物车的资源版本", HintType.Green)
+            Else
+                Hint($"已将 {Added} 个版本加入购物车，可前往「下载 → 购物车」统一安装", HintType.Green)
+            End If
+        Catch ex As Exception
+            Logger.Error(ex, "加入购物车失败", LogBehavior.Alert)
+        End Try
+    End Sub
 
     'Mod / 数据包 互相跳转
     Private Sub HintAlternative_Click() Handles HintAlternative.Click

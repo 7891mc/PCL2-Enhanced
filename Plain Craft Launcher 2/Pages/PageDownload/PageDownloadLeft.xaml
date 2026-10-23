@@ -54,6 +54,15 @@
                     </x:Array>
                 </local:MyListItem.Buttons>
             </local:MyListItem>
+            <local:MyListItem x:Name="ItemCart" Type="RadioBox" IsScaleAnimationEnabled="False" Tag="7" MinPaddingRight="35" Height="36" VerticalAlignment="Top" Title="购物车"
+        <local:MyListItem x:Name="ItemMap" Type="RadioBox" IsScaleAnimationEnabled="False" Tag="8" MinPaddingRight="35" Height="36" VerticalAlignment="Top" Title="地图"
+                  LogoScale="1.06" Logo="M7 18a2 2 0 0 1 2 2 2 2 0 0 1-2 2 2 2 0 0 1-2-2 2 2 0 0 1 2-2m10 0a2 2 0 0 1 2 2 2 2 0 0 1-2 2 2 2 0 0 1-2-2 2 2 0 0 1 2-2M7.17 14.75a.25.25 0 0 0 .25.25H19a1 1 0 0 1 1 1 1 1 0 0 1-1 1H7a2 2 0 0 1-2-2c0-.32.08-.63.21-.91L7.42 10 4 1H1V-1h4.27l.94 2H21a1 1 0 0 1 1 1c0 .17-.03.34-.07.5L18.24 11.25c-.38.75-1.18 1.25-2.04 1.25H8.7l-1.53 2.25zM18.36 5H6.79l2.91 5.5h6.5L18.36 5z">
+                <local:MyListItem.Buttons>
+                    <x:Array Type="{x:Type local:MyIconButton}">
+                        <local:MyIconButton Tag="7" ToolTip="清空购物车" LogoScale="0.85" Click="Refresh_Click" Logo="M432 432a48 48 0 1 1 96 0 48 48 0 0 1-96 0m-32 0a80 80 0 1 0 160 0 80 80 0 0 0-160 0m80 304c-176 0-320-139-320-320 0-56 15-108 41-151L161 224a32 32 0 1 0 45-45l-45-45h102V64H128L64 128h176v70H128l-45 45a32 32 0 1 0 45 45l41-41c-9 35-14 72-14 109 0 141 107 256 240 256 24 0 47-4 69-10l-53-53a32 32 0 1 0 45-45l90 90-22 22 109 109a32 32 0 1 0 45-45L480 736l-21-21a32 32 0 1 0-45 45z" />
+                    </x:Array>
+                </local:MyListItem.Buttons>
+            </local:MyListItem>
         </StackPanel>
     </local:MyScrollViewer>
 </local:MyPageLeft>

@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PCL2-Enhanced — Plain Craft Launcher 2 增强版</title>
+<meta name="description" content="PCL2-Enhanced: an enhanced open-source edition of PCL2 — download-limit fix, mod localization, dependency install, mod cart, screenshot center, backup manager, skin editor and 21 enhancements.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect x='1' y='1' width='14' height='14' fill='%231370F3'/%3E%3Crect x='4' y='4' width='4' height='4' fill='%23E8ECF4'/%3E%3Crect x='9' y='9' width='3' height='3' fill='%2353E0C6'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://miaoda.feishu.cn">
+<link rel="stylesheet" href="https://miaoda.feishu.cn/fonts/css2?family=Noto+Sans+SC:wght@400;500;700;900&display=swap">
+<style>
+  :root{
+    --bg:#0B0F17; --bg2:#101726; --panel:rgba(255,255,255,.035); --line:rgba(255,255,255,.08);
+    --blue:#1370F3; --blue2:#4890F5; --blueD:#0B5BCB; --cyan:#53E0C6;
+    --text:#E8ECF4; --muted:#97A4BC;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--bg); color:var(--text);
+    font-family:"Noto Sans SC","PingFang SC","Microsoft YaHei",system-ui,-apple-system,sans-serif;
+    font-size:16px; line-height:1.7; -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1120px;margin:0 auto;padding:0 22px}
+  a{color:var(--blue2);text-decoration:none}
+  a:hover{color:var(--cyan)}
+
+  /* ===== 顶部导航 ===== */
+  nav{
+    position:sticky;top:0;z-index:50;background:rgba(11,15,23,.82);
+    backdrop-filter:blur(10px);border-bottom:1px solid var(--line);
+  }
+  .nav-inner{display:flex;align-items:center;justify-content:space-between;height:60px}
+  .logo{display:flex;align-items:center;gap:10px;font-weight:900;font-size:18px;letter-spacing:.3px;color:var(--text)}
+  .logo-mark{width:26px;height:26px;border-radius:5px;background:var(--blue);position:relative;flex:none}
+  .logo-mark::before{content:"";position:absolute;left:6px;top:6px;width:7px;height:7px;background:var(--text)}
+  .logo-mark::after{content:"";position:absolute;right:5px;bottom:5px;width:5px;height:5px;background:var(--cyan)}
+  .nav-links{display:flex;align-items:center;gap:26px;font-size:14px;color:var(--muted)}
+  .nav-links a{color:var(--muted)}
+  .nav-links a:hover{color:var(--text)}
+  .lang-btn{
+    border:1px solid var(--line);background:var(--panel);color:var(--text);
+    padding:6px 14px;border-radius:6px;font-size:13px;cursor:pointer;font-family:inherit;
+    transition:border-color .2s,color .2s;
+  }
+  .lang-btn:hover{border-color:var(--blue2);color:var(--cyan)}
+
+  /* ===== Hero ===== */
+  .hero{position:relative;overflow:hidden;padding:84px 0 72px}
+  .hero::before{
+    content:"";position:absolute;inset:0;opacity:.5;pointer-events:none;
+    background-image:
+      linear-gradient(rgba(255,255,255,.045) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(255,255,255,.045) 1px,transparent 1px);
+    background-size:46px 46px;
+    -webkit-mask-image:radial-gradient(ellipse 90% 70% at 50% 20%,#000 40%,transparent 100%);
+    mask-image:radial-gradient(ellipse 90% 70% at 50% 20%,#000 40%,transparent 100%);
+  }
+  .cube{position:absolute;border:1px solid rgba(83,224,198,.28);background:rgba(19,112,243,.10);pointer-events:none}
+  .cube-a{width:64px;height:64px;top:120px;left:6%;animation:floaty 9s ease-in-out infinite}
+  .cube-b{width:38px;height:38px;top:300px;left:14%;animation:floaty 11s ease-in-out -3s infinite;border-color:rgba(72,144,245,.35)}
+  .cube-c{width:52px;height:52px;top:90px;right:8%;animation:floaty 10s ease-in-out -5s infinite;border-color:rgba(83,224,198,.35)}
+  .cube-d{width:30px;height:30px;bottom:90px;right:16%;animation:floaty 8s ease-in-out -2s infinite}
+  @keyframes floaty{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-14px) rotate(3deg)}}
+  .hero-inner{position:relative;display:grid;grid-template-columns:1.15fr .85fr;gap:56px;align-items:center}
+  .hero-kicker{
+    display:inline-flex;align-items:center;gap:8px;font-size:13px;color:var(--cyan);
+    border:1px solid rgba(83,224,198,.3);background:rgba(83,224,198,.07);
+    padding:5px 12px;border-radius:999px;margin-bottom:22px;
+  }
+  .hero-kicker::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--cyan)}
+  h1{font-size:52px;line-height:1.15;font-weight:900;letter-spacing:.5px}
+  h1 .accent{color:var(--blue2)}
+  .hero-sub{margin-top:18px;font-size:16px;color:var(--muted);max-width:520px}
+  .hero-cta{display:flex;gap:14px;margin-top:30px;flex-wrap:wrap}
+  .btn{
+    display:inline-flex;align-items:center;gap:8px;padding:12px 22px;border-radius:8px;
+    font-size:15px;font-weight:700;cursor:pointer;transition:transform .15s,box-shadow .2s,background .2s;
+  }
+  .btn-primary{background:var(--blue);color:#fff}
+  .btn-primary:hover{background:var(--blueD);transform:translateY(-2px);box-shadow:0 8px 24px rgba(19,112,243,.35)}
+  .btn-ghost{border:1px solid var(--line);color:var(--text);background:var(--panel)}
+  .btn-ghost:hover{border-color:var(--blue2);color:var(--cyan);transform:translateY(-2px)}
+  .hero-shot{position:relative}
+  .shot-frame{
+    border:1px solid var(--line);border-radius:12px;overflow:hidden;
+    background:var(--bg2);box-shadow:0 24px 60px rgba(0,0,0,.5);transform:rotate(1deg);
+    transition:transform .35s;
+  }
+  .shot-frame:hover{transform:rotate(0deg) scale(1.01)}
+  .shot-frame img{display:block;width:100%;height:auto;image-rendering:auto}
+  .shot-tag{
+    position:absolute;left:16px;bottom:16px;font-size:12px;color:var(--text);
+    background:rgba(11,15,23,.82);border:1px solid var(--line);padding:6px 12px;border-radius:6px;
+    backdrop-filter:blur(6px);
+  }
+  .hero-meta{display:flex;gap:34px;margin-top:26px;color:var(--muted);font-size:13px;flex-wrap:wrap}
+  .hero-meta b{display:block;color:var(--text);font-size:20px;font-weight:900}
+
+  /* ===== 通用区块 ===== */
+  section{padding:74px 0}
+  .sec-head{max-width:640px;margin-bottom:44px}
+  .sec-tag{font-size:13px;color:var(--blue2);font-weight:700;letter-spacing:1px;margin-bottom:10px}
+  .sec-title{font-size:32px;font-weight:900;line-height:1.3}
+  .sec-desc{color:var(--muted);margin-top:10px;font-size:15px}
+
+  /* ===== 亮点卡 ===== */
+  .highlights{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+  .h-card{
+    background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:26px 24px;
+    transition:border-color .25s,transform .25s;
+  }
+  .h-card:hover{border-color:rgba(72,144,245,.5);transform:translateY(-4px)}
+  .h-icon{width:44px;height:44px;border-radius:10px;background:rgba(19,112,243,.14);display:flex;align-items:center;justify-content:center;margin-bottom:16px}
+  .h-icon svg{width:24px;height:24px;stroke:var(--blue2);fill:none;stroke-width:1.8}
+  .h-card h3{font-size:17px;font-weight:900;margin-bottom:8px}
+  .h-card p{font-size:14px;color:var(--muted)}
+
+  /* ===== 21 项功能 ===== */
+  .feat-group{margin-bottom:34px}
+  .feat-group h3{font-size:18px;font-weight:900;display:flex;align-items:center;gap:10px;margin-bottom:16px}
+  .feat-group h3 .num{
+    font-size:12px;color:var(--cyan);border:1px solid rgba(83,224,198,.35);
+    padding:2px 8px;border-radius:5px;font-weight:700;
+  }
+  .feat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+  .f-card{
+    background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px 16px;
+    transition:border-color .2s,background .2s;
+  }
+  .f-card:hover{border-color:rgba(83,224,198,.4);background:rgba(83,224,198,.04)}
+  .f-card .dot{width:8px;height:8px;border-radius:2px;background:var(--blue2);display:inline-block;margin-bottom:10px}
+  .f-card h4{font-size:14.5px;font-weight:700;margin-bottom:4px}
+  .f-card p{font-size:12.5px;color:var(--muted);line-height:1.6}
+
+  /* ===== 时间轴 ===== */
+  .timeline{position:relative}
+  .timeline::before{content:"";position:absolute;left:calc(96px + 26px);top:0;bottom:0;width:1px;background:var(--line)}
+  .tl-node{display:grid;grid-template-columns:96px 1px 1fr;gap:0 26px}
+  .tl-time{font-size:13px;color:var(--muted);text-align:right;padding-top:2px;white-space:nowrap}
+  .tl-dot{grid-column:2;justify-self:center;width:11px;height:11px;border-radius:3px;background:var(--blue2);border:2px solid var(--bg);margin-top:14px;box-sizing:content-box}
+  .tl-card{grid-column:3;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px 18px;margin-bottom:20px}
+  .tl-card h4{font-size:15px;font-weight:700;margin-bottom:5px}
+  .tl-card p{font-size:13.5px;color:var(--muted)}
+  .tl-card .badge{display:inline-block;font-size:11.5px;color:var(--cyan);border:1px solid rgba(83,224,198,.3);border-radius:4px;padding:1px 7px;margin-left:8px;vertical-align:2px}
+
+  /* ===== 编译 ===== */
+  .build-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+  .b-step{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:22px 20px}
+  .b-step .b-num{font-size:30px;font-weight:900;color:rgba(72,144,245,.5);line-height:1;margin-bottom:12px}
+  .b-step h4{font-size:15px;font-weight:700;margin-bottom:6px}
+  .b-step p{font-size:13.5px;color:var(--muted)}
+
+  /* ===== FAQ ===== */
+  .faq{display:grid;gap:14px;max-width:760px}
+  details{
+    background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px 20px;
+  }
+  summary{cursor:pointer;font-weight:700;font-size:15px;list-style:none;display:flex;justify-content:space-between;align-items:center;gap:12px}
+  summary::after{content:"+";color:var(--blue2);font-size:20px;font-weight:400;transition:transform .25s}
+  details[open] summary::after{transform:rotate(45deg)}
+  details p{margin-top:12px;font-size:14px;color:var(--muted)}
+
+  /* ===== Footer ===== */
+  footer{border-top:1px solid var(--line);padding:40px 0 46px;color:var(--muted);font-size:13.5px}
+  .foot-grid{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
+  .foot-grid .cols{display:flex;gap:44px;flex-wrap:wrap}
+  .foot-grid h5{color:var(--text);font-size:13px;font-weight:700;margin-bottom:8px}
+  .foot-grid a{display:block;color:var(--muted);font-size:13px;margin-bottom:6px}
+  .foot-grid a:hover{color:var(--cyan)}
+  .foot-note{margin-top:26px;font-size:12px;color:rgba(151,164,188,.7);border-top:1px solid var(--line);padding-top:18px}
+
+  @media (max-width:1023px){
+    .hero-inner{grid-template-columns:1fr;gap:40px}
+    h1{font-size:38px}
+    .feat-grid{grid-template-columns:1fr}
+    .highlights,.build-grid{grid-template-columns:1fr}
+    .timeline::before{left:calc(72px + 16px)}
+    .tl-node{grid-template-columns:72px 1px 1fr;gap:0 16px}
+    .tl-time{font-size:12px}
+    .nav-links .link{display:none}
+  }
+  @media (prefers-reduced-motion:reduce){
+    .cube,.shot-frame{animation:none;transition:none}
+    html{scroll-behavior:auto}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap nav-inner">
+    <div class="logo"><span class="logo-mark"></span><span data-i18n="nav_title">PCL2-Enhanced</span></div>
+    <div class="nav-links">
+      <a class="link" href="#features" data-i18n="nav_features">功能特性</a>
+      <a class="link" href="#timeline" data-i18n="nav_timeline">演进历程</a>
+      <a class="link" href="#build" data-i18n="nav_build">编译</a>
+      <a class="link" href="#faq" data-i18n="nav_faq">FAQ</a>
+      <a href="https://github.com/7891mc/PCL2-Enhanced" target="_blank" rel="noopener" data-i18n="nav_repo">GitHub 仓库</a>
+      <button class="lang-btn" id="langBtn" type="button" data-i18n="lang_btn">English</button>
+    </div>
+  </div>
+</nav>
+
+<!-- ===== Hero ===== -->
+<header class="hero">
+  <div class="cube cube-a"></div><div class="cube cube-b"></div><div class="cube cube-c"></div><div class="cube cube-d"></div>
+  <div class="wrap hero-inner">
+    <div>
+      <div class="hero-kicker" data-i18n="hero_kicker">基于官方 PCL2 2.99.0.0 · 开源增强版</div>
+      <h1><span data-i18n="hero_title_a">更顺手的</span> <span class="accent" data-i18n="hero_title_b">PCL2 增强版</span></h1>
+      <p class="hero-sub" data-i18n="hero_sub">修复游戏本体下载限制，新增模组汉化、前置一键下载、模组购物车、截图中心、备份管理、皮肤绘制器等 21 项功能。界面动效与官方版完全一致。</p>
+      <div class="hero-cta">
+        <a class="btn btn-primary" href="https://github.com/7891mc/PCL2-Enhanced" target="_blank" rel="noopener" data-i18n="cta_repo">查看源码</a>
+        <a class="btn btn-ghost" href="#features" data-i18n="cta_features">了解 21 项功能</a>
+      </div>
+      <div class="hero-meta">
+        <div><b>21</b><span data-i18n="meta_features">项功能增强</span></div>
+        <div><b>341</b><span data-i18n="meta_files">个源文件</span></div>
+        <div><b>2.99.0.0</b><span data-i18n="meta_base">官方基线版本</span></div>
+      </div>
+    </div>
+    <div class="hero-shot">
+      <div class="shot-frame"><img src="assets/screenshot-version.png" alt="PCL2 版本设置-修改界面"></div>
+      <div class="shot-tag" data-i18n="hero_shot_tag">版本设置 · 修改游戏核心</div>
+    </div>
+  </div>
+</header>
+
+<!-- ===== 核心亮点 ===== -->
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-tag" data-i18n="hl_tag">CORE HIGHLIGHTS</div>
+      <h2 class="sec-title" data-i18n="hl_title">三个最值得关注的能力</h2>
+      <p class="sec-desc" data-i18n="hl_desc">围绕模组生态做的深度增强，全部沿用 PCL2 原生动画与界面风格。</p>
+    </div>
+    <div class="highlights">
+      <div class="h-card">
+        <div class="h-icon"><svg viewBox="0 0 24 24"><path d="M4 7l8-4 8 4-8 4-8-4z"/><path d="M4 12l8 4 8-4"/><path d="M4 17l8 4 8-4"/></svg></div>
+        <h3 data-i18n="hl1_t">模组一键汉化</h3>
+        <p data-i18n="hl1_d">解析模组 jar 内 modid，自动匹配 CFPA 汉化仓库并写入资源包，无需手动找汉化文件。</p>
+      </div>
+      <div class="h-card">
+        <div class="h-icon"><svg viewBox="0 0 24 24"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 21h16"/></svg></div>
+        <h3 data-i18n="hl2_t">前置依赖一键下载</h3>
+        <p data-i18n="hl2_d">按文件 SHA1 反查 Modrinth，BFS 解析 required 依赖链，缺什么前置自动补齐。</p>
+      </div>
+      <div class="h-card">
+        <div class="h-icon"><svg viewBox="0 0 24 24"><path d="M6 4h12v4H6z"/><path d="M4 8h16v11H4z"/><path d="M9 12h6"/></svg></div>
+        <h3 data-i18n="hl3_t">模组购物车批量安装</h3>
+        <p data-i18n="hl3_d">多模组加入购物车统一处理，加载器筛选、批量下载安装一步到位。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 21 项功能 ===== -->
+<section id="features">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-tag" data-i18n="feat_tag">FEATURES</div>
+      <h2 class="sec-title" data-i18n="feat_title">21 项功能增强</h2>
+      <p class="sec-desc" data-i18n="feat_desc">三大部分：实例管理与数据维护、模组与资源生态、个性化与界面体验。</p>
+    </div>
+
+    <div class="feat-group">
+      <h3><span class="num">01</span><span data-i18n="g1_t">实例管理与数据维护</span></h3>
+      <div class="feat-grid">
+        <div class="f-card"><span class="dot"></span><h4 data-i18n="f1_t">截图中心与跨实例同步</h4><p data-i18n="f1_d">集中管理实例截图，支持跨实例同步备份</p></div>
+        <div class="f-card"><span class="dot"></span><h4 data-i18n="f2_t">备份管理</h4><p data-i18n="f2_d">世界、配置、模组一键备份与还原</p></div>
+        <div class="f-card"><span class="dot"></span><h4 data-i18n="f3_t">实例核心编辑与一键升级</h4><p data-i18n="f3_d">修改/升级游戏核心与加载器，下载限制解除后完整可用</p></div>
+        <div class="f-card"><span class="dot"></span><h4 data-i18n="f4_t">实例内筛选与数据包管理</h4><p data-i18n="f4_d">实例内模组筛选排序；数据包安装与管理</p></div>
+        <div class="f-card"><span class="dot"></span><h4 data-i18n="f5_t">实例图标生成器</h4><p data-i18n="f5_d">一键生成实例专属图标</p></div>
+        <div class="f-card"><span class="dot"></span><h4 data-i18n="f6_t">实例分组及关系图</h4><p data-i18n="f6_d">实例分组管理，依赖关系图直观展示</p></div>
+        <div class="f-card"><span class="dot"></span><h4 data-i18n="f7_t">.minecraft 文件结构支持</h4><p data-i18n="f7_d">完整支持 .minecraft 目录结构与版本隔离</p></div>
+      </div>
+    </div>
+
+    <div class="feat-group">
+      <h3><span class="num">02</span><span data-i18n="g2_t">模组与资源生态</span></h3>
+      <div class="feat-grid">
+        <div class="f-card"><span class="dot"></span><h4 data-i18n="f8_t">依赖项显示与依赖预览</h4><p data-i18n="f8_d">安装模组时展示依赖项与依赖关系预览</p></div>
+        <div class="f-card"><span class="dot"></span><h4 data-i18n="f9_t">模组购物车安装流程</h4><p data-i18n="f9_d">多模组加入购物车，批量一键安装</p></div>
+        <div class="f-card"><span class="dot"></span><h4 data-i18n="f10_t">模组匹配 MC 百科页面</h4><p data-i18n="f10_d">模组详情一键跳转 MCBBS Wiki</p></div>
+        <div class="f-card"><span class="dot"></span><h4 data-i18n="f11_t">Cleanroom 加载器支持</h4><p data-i18n="f11_d">Cleanroom 安装引导，1.8.8 支持更多加载器</p></div>
+        <div class="f-card"><span class="dot"></span><h4 data-i18n="f12_t">CurseForge 地图安装</h4><p data-i18n="f12_d">下载页新增地图分类，双源支持</p></div>
+        <div class="f-card"><span class="dot"></span><h4 data-i18n="f13_t">MC Archive 内容源</h4><p data-i18n="f13_d">官方源与 BMCLAPI 不可用时自动降级</p></div>
+        <div class="f-card"><span class="dot"></span><h4 data-i18n="f14_t">整合包安装优化</h4><p data-i18n="f14_d">整合包安装流程优化</p></div>
+        <div class="f-card"><span class="dot"></span><h4 data-i18n="f15_t">模组收藏功能优化</h4><p data-i18n="f15_d">模组收藏管理增强</p></div>
+      </div>
+    </div>
+
+    <div class="feat-group">
+      <h3><span class="num">03</span><span data-i18n="g3_t">个性化与界面体验</span></h3>
+      <div class="feat-grid">
+        <div class="f-card"><span class="dot"></span><h4 data-i18n="f16_t">皮肤绘制器与盔甲预览</h4><p data-i18n="f16_d">像素皮肤编辑器，铁/金/钻盔甲实时预览</p></div>
+        <div class="f-card"><span class="dot"></span><h4 data-i18n="f17_t">收藏夹功能</h4><p data-i18n="f17_d">实例收藏夹快速访问</p></div>
+        <div class="f-card"><span class="dot"></span><h4 data-i18n="f18_t">发现页卡片与模糊搜索</h4><p data-i18n="f18_d">更多卡片布局，搜索框防抖自动搜索</p></div>
+        <div class="f-card"><span class="dot"></span><h4 data-i18n="f19_t">设置页存储管理</h4><p data-i18n="f19_d">设置内新增数据/缓存目录管理</p></div>
+        <div class="f-card"><span class="dot"></span><h4 data-i18n="f20_t">关于界面与实验室 UI</h4><p data-i18n="f20_d">关于页与实验室页重构</p></div>
+        <div class="f-card"><span class="dot"></span><h4 data-i18n="f21_t">整体 UI 表现优化</h4><p data-i18n="f21_d">全部新页面沿用 PCL2 原生动画风格</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 时间轴 ===== -->
+<section id="timeline" style="background:var(--bg2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-tag" data-i18n="tl_tag">ROADMAP</div>
+      <h2 class="sec-title" data-i18n="tl_title">演进历程</h2>
+      <p class="sec-desc" data-i18n="tl_desc">从官方 2.99.0.0 基线到完整增强版的开发路径。</p>
+    </div>
+    <div class="timeline">
+      <div class="tl-node"><div class="tl-time">2026-10</div><div class="tl-dot"></div><div class="tl-card"><h4 data-i18n="t1_t">官方 2.99.0.0 基线</h4><p data-i18n="t1_d">获取最新开源源码（commit 6b9a50d），完成结构分析</p></div></div>
+      <div class="tl-node"><div class="tl-time"></div><div class="tl-dot"></div><div class="tl-card"><h4 data-i18n="t2_t">修复游戏本体下载限制<span class="badge" data-i18n="badge_fix">FIX</span></h4><p data-i18n="t2_d">解除 RestrictMcDownload 限制，官方源/BMCLAPI 下载恢复</p></div></div>
+      <div class="tl-node"><div class="tl-time"></div><div class="tl-dot"></div><div class="tl-card"><h4 data-i18n="t3_t">版本修改 / 升级功能</h4><p data-i18n="t3_d">版本设置页修改与升级游戏核心，加载器自由切换</p></div></div>
+      <div class="tl-node"><div class="tl-time"></div><div class="tl-dot"></div><div class="tl-card"><h4 data-i18n="t4_t">模组汉化 + 前置一键下载</h4><p data-i18n="t4_d">CFPA 汉化自动匹配写入；Modrinth 依赖链 BFS 解析补齐</p></div></div>
+      <div class="tl-node"><div class="tl-time"></div><div class="tl-dot"></div><div class="tl-card"><h4 data-i18n="t5_t">21 项功能分批落地</h4><p data-i18n="t5_d">截图中心、备份、购物车、皮肤绘制器、地图下载、MC Archive、Cleanroom 等</p></div></div>
+      <div class="tl-node"><div class="tl-time"></div><div class="tl-dot"></div><div class="tl-card"><h4 data-i18n="t6_t">单文件发布<span class="badge" data-i18n="badge_rel">RELEASE</span></h4><p data-i18n="t6_d">Windows Release 编译 0 错误，启动冒烟测试通过</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 编译 ===== -->
+<section id="build">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-tag" data-i18n="build_tag">BUILD</div>
+      <h2 class="sec-title" data-i18n="build_title">编译指南</h2>
+      <p class="sec-desc" data-i18n="build_desc">Windows 环境 · .NET Framework 4.8 · Visual Studio 2022</p>
+    </div>
+    <div class="build-grid">
+      <div class="b-step"><div class="b-num">01</div><h4 data-i18n="b1_t">准备环境</h4><p data-i18n="b1_d">安装 .NET Framework 4.8 Developer Pack 与 VS2022（.NET 桌面开发工作负载）</p></div>
+      <div class="b-step"><div class="b-num">02</div><h4 data-i18n="b2_t">编译 Release</h4><p data-i18n="b2_d">打开 Plain Craft Launcher 2.sln，Release / x64 生成解决方案</p></div>
+      <div class="b-step"><div class="b-num">03</div><h4 data-i18n="b3_t">单文件发布</h4><p data-i18n="b3_d">依赖 DLL 与主程序打包为单文件 zip，启动即用</p></div>
+    </div>
+    <p style="margin-top:18px;font-size:13.5px;color:var(--muted)"><span data-i18n="build_note">命令行 MSBuild 的 WPF 任务宿主配置见</span> <a href="build-notes.md" data-i18n="build_note_link">build-notes.md</a></p>
+  </div>
+</section>
+
+<!-- ===== FAQ ===== -->
+<section id="faq" style="background:var(--bg2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-tag" data-i18n="faq_tag">FAQ</div>
+      <h2 class="sec-title" data-i18n="faq_title">常见问题</h2>
+    </div>
+    <div class="faq">
+      <details>
+        <summary data-i18n="q1_t">为什么有些模组搜不到？</summary>
+        <p data-i18n="q1_d">开源版未内置 CurseForge API Key，CurseForge 请求自动降级；Modrinth 源免 key 完全可用，仅 CurseForge 独占内容缺失。</p>
+      </details>
+      <details>
+        <summary data-i18n="q2_t">如何启用 CurseForge 源？</summary>
+        <p data-i18n="q2_d">无需改代码：设置环境变量 PCL_CURSEFORGE_API_KEY 后重启 PCL2 即可。Key 通过 CurseForge 官方申请表获取。</p>
+      </details>
+      <details>
+        <summary data-i18n="q3_t">和官方版有什么区别？</summary>
+        <p data-i18n="q3_d">基于官方 2.99.0.0 源码：修复下载限制 + 21 项功能增强。界面动效、交互风格与官方版完全一致。</p>
+      </details>
+      <details>
+        <summary data-i18n="q4_t">如何从源码编译？</summary>
+        <p data-i18n="q4_d">Windows + .NET Framework 4.8 Developer Pack + VS2022，Release/x64 编译，详见上方编译指南与 build-notes.md。</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div style="max-width:300px">
+        <div class="logo" style="margin-bottom:10px"><span class="logo-mark"></span>PCL2-Enhanced</div>
+        <p data-i18n="foot_desc">Plain Craft Launcher 2 开源增强版：修复下载限制，21 项功能增强，界面动效与官方一致。</p>
+      </div>
+      <div class="cols">
+        <div>
+          <h5 data-i18n="foot_links">链接</h5>
+          <a href="https://github.com/7891mc/PCL2-Enhanced" target="_blank" rel="noopener">GitHub</a>
+          <a href="https://github.com/7891mc/PCL2-Enhanced/releases" target="_blank" rel="noopener" data-i18n="foot_rel">Releases</a>
+          <a href="build-notes.md" data-i18n="foot_build">编译说明</a>
+        </div>
+        <div>
+          <h5 data-i18n="foot_credits">致谢</h5>
+          <a href="https://github.com/Hex-Dragon/PCL2" target="_blank" rel="noopener" data-i18n="foot_pcl">官方 PCL2（LTCat）</a>
+          <a href="https://modrinth.com" target="_blank" rel="noopener">Modrinth API</a>
+          <a href="https://www.curseforge.com" target="_blank" rel="noopener">CurseForge API</a>
+        </div>
+      </div>
+    </div>
+    <div class="foot-note">
+      <span data-i18n="foot_license">遵循上游《PCL 分发有限许可》（LICENCE）。本仓库为第三方开源改造版，与官方 PCL2 无隶属关系。</span>
+      © 2026 PCL2-Enhanced
+    </div>
+  </div>
+</footer>
+
+<script>
+  const I18N = {
+    zh: {
+      lang_btn:"English", nav_features:"功能特性", nav_timeline:"演进历程", nav_build:"编译", nav_faq:"FAQ", nav_repo:"GitHub 仓库",
+      hero_kicker:"基于官方 PCL2 2.99.0.0 · 开源增强版", hero_title_a:"更顺手的", hero_title_b:"PCL2 增强版",
+      hero_sub:"修复游戏本体下载限制，新增模组汉化、前置一键下载、模组购物车、截图中心、备份管理、皮肤绘制器等 21 项功能。界面动效与官方版完全一致。",
+      cta_repo:"查看源码", cta_features:"了解 21 项功能",
+      meta_features:"项功能增强", meta_files:"个源文件", meta_base:"官方基线版本",
+      hero_shot_tag:"版本设置 · 修改游戏核心",
+      hl_tag:"核心亮点", hl_title:"三个最值得关注的能力", hl_desc:"围绕模组生态做的深度增强，全部沿用 PCL2 原生动画与界面风格。",
+      hl1_t:"模组一键汉化", hl1_d:"解析模组 jar 内 modid，自动匹配 CFPA 汉化仓库并写入资源包，无需手动找汉化文件。",
+      hl2_t:"前置依赖一键下载", hl2_d:"按文件 SHA1 反查 Modrinth，BFS 解析 required 依赖链，缺什么前置自动补齐。",
+      hl3_t:"模组购物车批量安装", hl3_d:"多模组加入购物车统一处理，加载器筛选、批量下载安装一步到位。",
+      feat_tag:"功能清单", feat_title:"21 项功能增强", feat_desc:"三大部分：实例管理与数据维护、模组与资源生态、个性化与界面体验。",
+      g1_t:"实例管理与数据维护", g2_t:"模组与资源生态", g3_t:"个性化与界面体验",
+      f1_t:"截图中心与跨实例同步", f1_d:"集中管理实例截图，支持跨实例同步备份",
+      f2_t:"备份管理", f2_d:"世界、配置、模组一键备份与还原",
+      f3_t:"实例核心编辑与一键升级", f3_d:"修改/升级游戏核心与加载器，下载限制解除后完整可用",
+      f4_t:"实例内筛选与数据包管理", f4_d:"实例内模组筛选排序；数据包安装与管理",
+      f5_t:"实例图标生成器", f5_d:"一键生成实例专属图标",
+      f6_t:"实例分组及关系图", f6_d:"实例分组管理，依赖关系图直观展示",
+      f7_t:".minecraft 文件结构支持", f7_d:"完整支持 .minecraft 目录结构与版本隔离",
+      f8_t:"依赖项显示与依赖预览", f8_d:"安装模组时展示依赖项与依赖关系预览",
+      f9_t:"模组购物车安装流程", f9_d:"多模组加入购物车，批量一键安装",
+      f10_t:"模组匹配 MC 百科页面", f10_d:"模组详情一键跳转 MCBBS Wiki",
+      f11_t:"Cleanroom 加载器支持", f11_d:"Cleanroom 安装引导，1.8.8 支持更多加载器",
+      f12_t:"CurseForge 地图安装", f12_d:"下载页新增地图分类，双源支持",
+      f13_t:"MC Archive 内容源", f13_d:"官方源与 BMCLAPI 不可用时自动降级",
+      f14_t:"整合包安装优化", f14_d:"整合包安装流程优化",
+      f15_t:"模组收藏功能优化", f15_d:"模组收藏管理增强",
+      f16_t:"皮肤绘制器与盔甲预览", f16_d:"像素皮肤编辑器，铁/金/钻盔甲实时预览",
+      f17_t:"收藏夹功能", f17_d:"实例收藏夹快速访问",
+      f18_t:"发现页卡片与模糊搜索", f18_d:"更多卡片布局，搜索框防抖自动搜索",
+      f19_t:"设置页存储管理", f19_d:"设置内新增数据/缓存目录管理",
+      f20_t:"关于界面与实验室 UI", f20_d:"关于页与实验室页重构",
+      f21_t:"整体 UI 表现优化", f21_d:"全部新页面沿用 PCL2 原生动画风格",
+      tl_tag:"演进历程", tl_title:"演进历程", tl_desc:"从官方 2.99.0.0 基线到完整增强版的开发路径。",
+      badge_fix:"修复", badge_rel:"发布",
+      t1_t:"官方 2.99.0.0 基线", t1_d:"获取最新开源源码（commit 6b9a50d），完成结构分析",
+      t2_t:"修复游戏本体下载限制", t2_d:"解除 RestrictMcDownload 限制，官方源/BMCLAPI 下载恢复",
+      t3_t:"版本修改 / 升级功能", t3_d:"版本设置页修改与升级游戏核心，加载器自由切换",
+      t4_t:"模组汉化 + 前置一键下载", t4_d:"CFPA 汉化自动匹配写入；Modrinth 依赖链 BFS 解析补齐",
+      t5_t:"21 项功能分批落地", t5_d:"截图中心、备份、购物车、皮肤绘制器、地图下载、MC Archive、Cleanroom 等",
+      t6_t:"单文件发布", t6_d:"Windows Release 编译 0 错误，启动冒烟测试通过",
+      build_tag:"编译指南", build_title:"编译指南", build_desc:"Windows 环境 · .NET Framework 4.8 · Visual Studio 2022",
+      b1_t:"准备环境", b1_d:"安装 .NET Framework 4.8 Developer Pack 与 VS2022（.NET 桌面开发工作负载）",
+      b2_t:"编译 Release", b2_d:"打开 Plain Craft Launcher 2.sln，Release / x64 生成解决方案",
+      b3_t:"单文件发布", b3_d:"依赖 DLL 与主程序打包为单文件 zip，启动即用",
+      build_note:"命令行 MSBuild 的 WPF 任务宿主配置见", build_note_link:"build-notes.md",
+      faq_tag:"常见问题", faq_title:"常见问题",
+      q1_t:"为什么有些模组搜不到？", q1_d:"开源版未内置 CurseForge API Key，CurseForge 请求自动降级；Modrinth 源免 key 完全可用，仅 CurseForge 独占内容缺失。",
+      q2_t:"如何启用 CurseForge 源？", q2_d:"无需改代码：设置环境变量 PCL_CURSEFORGE_API_KEY 后重启 PCL2 即可。Key 通过 CurseForge 官方申请表获取。",
+      q3_t:"和官方版有什么区别？", q3_d:"基于官方 2.99.0.0 源码：修复下载限制 + 21 项功能增强。界面动效、交互风格与官方版完全一致。",
+      q4_t:"如何从源码编译？", q4_d:"Windows + .NET Framework 4.8 Developer Pack + VS2022，Release/x64 编译，详见上方编译指南与 build-notes.md。",
+      foot_desc:"Plain Craft Launcher 2 开源增强版：修复下载限制，21 项功能增强，界面动效与官方一致。",
+      foot_links:"链接", foot_rel:"Releases", foot_build:"编译说明",
+      foot_credits:"致谢", foot_pcl:"官方 PCL2（LTCat）",
+      foot_license:"遵循上游《PCL 分发有限许可》（LICENCE）。本仓库为第三方开源改造版，与官方 PCL2 无隶属关系。",
+      nav_title:"PCL2-Enhanced"
+    },
+    en: {
+      lang_btn:"中文", nav_features:"Features", nav_timeline:"Roadmap", nav_build:"Build", nav_faq:"FAQ", nav_repo:"GitHub",
+      hero_kicker:"Based on official PCL2 2.99.0.0 · Open-source enhanced edition",
+      hero_title_a:"A better", hero_title_b:"PCL2",
+      hero_sub:"Game-download restriction fixed. 21 enhancements: mod localization, one-click dependencies, mod cart, screenshot center, backup manager, skin editor and more. UI animations identical to the official build.",
+      cta_repo:"View Source", cta_features:"21 Features",
+      meta_features:"enhancements", meta_files:"source files", meta_base:"base version",
+      hero_shot_tag:"Version settings · Modify game core",
+      hl_tag:"CORE HIGHLIGHTS", hl_title:"Three capabilities that matter", hl_desc:"Deep enhancements around the mod ecosystem, all keeping PCL2's native animations and UI style.",
+      hl1_t:"One-click mod localization", hl1_d:"Parses modid from mod jars, auto-matches the CFPA localization repo and writes a resource pack. No manual localization files needed.",
+      hl2_t:"One-click dependency install", hl2_d:"Resolves files by SHA1 via Modrinth, BFS-parses the required dependency chain and downloads missing prerequisites automatically.",
+      hl3_t:"Mod cart batch install", hl3_d:"Add multiple mods to the cart, filter by loader and batch-install in one go.",
+      feat_tag:"FEATURES", feat_title:"21 Enhancements", feat_desc:"Three parts: instance management & data, mods & resource ecosystem, personalization & UI.",
+      g1_t:"Instance Management & Data", g2_t:"Mods & Resource Ecosystem", g3_t:"Personalization & UI",
+      f1_t:"Screenshot center & cross-instance sync", f1_d:"Central screenshot management with cross-instance sync",
+      f2_t:"Backup manager", f2_d:"One-click backup & restore of worlds, configs and mods",
+      f3_t:"Core edit & one-click upgrade", f3_d:"Modify/upgrade game core and loaders; fully usable after the download-limit fix",
+      f4_t:"In-instance filter & data packs", f4_d:"Filter/sort mods in an instance; install & manage data packs",
+      f5_t:"Instance icon generator", f5_d:"Generate a unique icon for each instance",
+      f6_t:"Instance grouping & relation graph", f6_d:"Group instances and visualize dependency relations",
+      f7_t:".minecraft structure support", f7_d:"Full .minecraft folder structure with version isolation",
+      f8_t:"Dependency display & preview", f8_d:"Show dependencies and preview relations when installing mods",
+      f9_t:"Mod cart install flow", f9_d:"Add mods to cart and batch-install",
+      f10_t:"MCBBS Wiki page matching", f10_d:"Jump to the MCBBS Wiki page for each mod",
+      f11_t:"Cleanroom loader support", f11_d:"Cleanroom installer guide; more loaders for 1.8.8",
+      f12_t:"CurseForge map install", f12_d:"New Maps category with dual-source support",
+      f13_t:"MC Archive source", f13_d:"Automatic fallback when official & BMCLAPI sources fail",
+      f14_t:"Modpack install optimized", f14_d:"Improved modpack installation flow",
+      f15_t:"Mod favorites enhanced", f15_d:"Enhanced mod favorites management",
+      f16_t:"Skin editor & armor preview", f16_d:"Pixel skin editor with iron/gold/diamond armor live preview",
+      f17_t:"Favorites", f17_d:"Quick access via instance favorites",
+      f18_t:"Discovery cards & fuzzy search", f18_d:"More card layouts; debounced auto-search",
+      f19_t:"Settings storage manager", f19_d:"Data/cache directory management inside Settings",
+      f20_t:"About & Lab UI", f20_d:"Redesigned About and Lab pages",
+      f21_t:"Overall UI polish", f21_d:"All new pages keep PCL2's native animation style",
+      tl_tag:"ROADMAP", tl_title:"Roadmap", tl_desc:"From the official 2.99.0.0 baseline to the full enhanced build.",
+      badge_fix:"FIX", badge_rel:"RELEASE",
+      t1_t:"Official 2.99.0.0 baseline", t1_d:"Latest open-source source fetched (commit 6b9a50d), structure analyzed",
+      t2_t:"Game-download restriction fixed", t2_d:"RestrictMcDownload removed; official/BMCLAPI downloads restored",
+      t3_t:"Version modify / upgrade", t3_d:"Modify and upgrade game core in version settings, switch loaders freely",
+      t4_t:"Localization + dependency install", t4_d:"CFPA localization auto-matched; Modrinth dependency chain resolved via BFS",
+      t5_t:"21 features shipped in batches", t5_d:"Screenshot center, backup, cart, skin editor, map download, MC Archive, Cleanroom and more",
+      t6_t:"Single-file release", t6_d:"Windows Release build with 0 errors; smoke test passed",
+      build_tag:"BUILD", build_title:"Build Guide", build_desc:"Windows · .NET Framework 4.8 · Visual Studio 2022",
+      b1_t:"Prepare environment", b1_d:"Install .NET Framework 4.8 Developer Pack and VS2022 (.NET desktop development workload)",
+      b2_t:"Build Release", b2_d:"Open Plain Craft Launcher 2.sln and build Release / x64",
+      b3_t:"Single-file release", b3_d:"Package dependency DLLs with the main exe into one portable zip",
+      build_note:"WPF task-host configuration for command-line MSBuild: ", build_note_link:"build-notes.md",
+      faq_tag:"FAQ", faq_title:"FAQ",
+      q1_t:"Why are some mods missing?", q1_d:"The open-source build bundles no CurseForge API key, so CurseForge requests degrade automatically; the key-free Modrinth source works fully. Only CurseForge-exclusive content is absent.",
+      q2_t:"How to enable CurseForge?", q2_d:"No code change needed: set the environment variable PCL_CURSEFORGE_API_KEY and restart PCL2. Keys are issued via the official CurseForge application form.",
+      q3_t:"What differs from the official build?", q3_d:"Based on official 2.99.0.0 source: download-limit fix plus 21 enhancements. UI animations and interaction style are identical to the official build.",
+      q4_t:"How to build from source?", q4_d:"Windows + .NET Framework 4.8 Developer Pack + VS2022, Release/x64. See the build guide above and build-notes.md.",
+      foot_desc:"An enhanced open-source edition of Plain Craft Launcher 2: download-limit fix, 21 enhancements, official-matching UI animations.",
+      foot_links:"Links", foot_rel:"Releases", foot_build:"Build notes",
+      foot_credits:"Credits", foot_pcl:"Official PCL2 (LTCat)",
+      foot_license:"Follows the upstream PCL Limited Distribution License (LICENCE). Third-party enhanced build, not affiliated with official PCL2.",
+      nav_title:"PCL2-Enhanced"
+    }
+  };
+  const langBtn = document.getElementById("langBtn");
+  let lang = localStorage.getItem("pcl2lang") || (navigator.language && navigator.language.toLowerCase().startsWith("zh") ? "zh" : "en");
+  function applyLang(l){
+    document.documentElement.lang = l === "zh" ? "zh-CN" : "en";
+    document.querySelectorAll("[data-i18n]").forEach(el => {
+      const k = el.getAttribute("data-i18n");
+      if (I18N[l] && I18N[l][k] !== undefined) el.textContent = I18N[l][k];
+    });
+    langBtn.textContent = I18N[l].lang_btn;
+    localStorage.setItem("pcl2lang", l);
+  }
+  langBtn.addEventListener("click", () => { lang = lang === "zh" ? "en" : "zh"; applyLang(lang); });
+  applyLang(lang);
+</script>
+

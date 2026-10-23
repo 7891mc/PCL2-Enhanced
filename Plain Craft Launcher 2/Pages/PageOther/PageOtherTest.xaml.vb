@@ -1,4 +1,16 @@
+Imports System.Windows
+
 Public Class PageOtherTest
+
+    Private Sub BtnOpenData_Click(Sender As Object, E As RoutedEventArgs) Handles BtnOpenData.Click
+        OpenExplorer(PathBase)
+        Hint("已打开 PCL 数据目录。", HintType.Blue)
+    End Sub
+
+    Private Sub BtnOpenCache_Click(Sender As Object, E As RoutedEventArgs) Handles BtnOpenCache.Click
+        OpenExplorer(PathTemp)
+        Hint("已打开缓存目录。", HintType.Blue)
+    End Sub
 
     Public Shared Sub StartCustomDownload(Url As String, FileName As String, Optional Folder As String = Nothing)
         Hint("为便于维护，开源内容中不包含百宝箱功能……")

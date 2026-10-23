@@ -160,6 +160,78 @@ Public Class PageInstanceOverall
         End Try
     End Sub
 
+    '生成实例图标（从当前登录玩家的皮肤面部生成）
+    Private Sub BtnGenerateLogo_Click() Handles BtnGenerateLogo.Click
+        Dim OldText As String = BtnGenerateLogo.Text
+        BtnGenerateLogo.Text = "生成中…"
+        BtnGenerateLogo.IsEnabled = False
+        RunInThread(
+        Sub()
+            Try
+                '取当前登录的正版 UUID
+                Dim Uuid As String = Settings.Get(Of String)("CacheMsV2Uuid")
+                Dim SkinType As String = "Ms"
+                If String.IsNullOrEmpty(Uuid) Then
+                    Uuid = Settings.Get(Of String)("CacheNideUuid")
+                    SkinType = "Nide"
+                End If
+                If String.IsNullOrEmpty(Uuid) Then
+                    Uuid = Settings.Get(Of String)("CacheAuthUuid")
+                    SkinType = "Auth"
+                End If
+                If String.IsNullOrEmpty(Uuid) Then
+                    RunInUi(Sub()
+                        BtnGenerateLogo.Text = OldText
+                        BtnGenerateLogo.IsEnabled = True
+                        Hint("未找到当前登录用户的 UUID，无法生成皮肤图标。离线用户请改用自定义图标。", HintType.Red)
+                    End Sub)
+                    Return
+                End If
+                '下载皮肤文件
+                Dim SkinFile As String = McSkinDownload(McSkinGetAddress(Uuid, SkinType))
+                RunInUi(Sub()
+                    Try
+                        '取皮肤面部 8x8 区域并放大到 128x128
+                        Dim Source As New System.Windows.Media.Imaging.BitmapImage()
+                        Source.BeginInit()
+                        Source.UriSource = New Uri(SkinFile)
+                        Source.CacheOption = System.Windows.Media.Imaging.BitmapCacheOption.OnLoad
+                        Source.EndInit()
+                        Dim Cropped As New System.Windows.Media.Imaging.CroppedBitmap(Source, New Int32Rect(8, 8, 8, 8))
+                        Dim Scaled As New System.Windows.Media.Imaging.TransformedBitmap(Cropped, New System.Windows.Media.ScaleTransform(16, 16))
+                        Dim Encoder As New System.Windows.Media.Imaging.PngBitmapEncoder()
+                        Encoder.Frames.Add(System.Windows.Media.Imaging.BitmapFrame.Create(Scaled))
+                        DirectoryUtils.Create(PageInstanceLeft.Instance.PathVersion & "PCL\")
+                        Using Stream As IO.Stream = IO.File.Create(PageInstanceLeft.Instance.PathVersion & "PCL\Logo.png")
+                            Encoder.Save(Stream)
+                        End Using
+                        '写入配置并应用自定义图标
+                        WriteIni(PageInstanceLeft.Instance.PathVersion & "PCL\Setup.ini", "Logo", "PCL\Logo.png")
+                        WriteIni(PageInstanceLeft.Instance.PathVersion & "PCL\Setup.ini", "LogoCustom", "True")
+                        WriteIni(McFolderSelected & "PCL.ini", "InstanceCache", "") '要求刷新缓存
+                        PageInstanceLeft.Instance = New McInstance(PageInstanceLeft.Instance.Name).Load()
+                        Reload()
+                        LoaderFolderRun(McInstanceListLoader, McFolderSelected, LoaderFolderRunType.ForceRun, MaxDepth:=1, ExtraPath:="versions\")
+                        Hint("已从玩家皮肤生成实例图标！", HintType.Green)
+                    Catch ex As Exception
+                        Logger.Error(ex, "生成实例图标失败")
+                        Hint("生成实例图标失败，请重试或改用自定义图标。", HintType.Red)
+                    Finally
+                        BtnGenerateLogo.Text = OldText
+                        BtnGenerateLogo.IsEnabled = True
+                    End Try
+                End Sub)
+            Catch ex As Exception
+                Logger.Error(ex, "获取玩家皮肤失败")
+                RunInUi(Sub()
+                    BtnGenerateLogo.Text = OldText
+                    BtnGenerateLogo.IsEnabled = True
+                    Hint("获取玩家皮肤失败，请检查网络或登录状态。", HintType.Red)
+                End Sub)
+            End Try
+        End Sub)
+    End Sub
+
     '收藏夹
     Private Sub BtnDisplayStar_Click(sender As Object, e As EventArgs) Handles BtnDisplayStar.Click
         Try

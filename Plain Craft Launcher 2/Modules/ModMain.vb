@@ -383,6 +383,8 @@ EndHint:
     Public FrmDownloadPack As PageDownloadPack
     Public FrmDownloadDataPack As PageDownloadDataPack
     Public FrmDownloadShader As PageDownloadShader
+    Public FrmPageDownloadCart As PageDownloadCart
+    Public FrmDownloadMap As PageDownloadMap
     Public FrmDownloadResourcePack As PageDownloadResourcePack
 
     '设置页面声明
@@ -391,6 +393,8 @@ EndHint:
     Public FrmSetupUI As PageSetupUI
     Public FrmSetupSystem As PageSetupSystem
     Public FrmSetupLink As PageSetupLink
+    Public FrmPageSetupStorage As PageSetupStorage
+    Public FrmPageSetupSkin As PageSetupSkin
 
     '其他页面声明
     Public FrmOtherLeft As PageOtherLeft
@@ -414,6 +418,9 @@ EndHint:
     Public FrmInstanceModDisabled As PageInstanceModDisabled
     Public FrmInstanceSetup As PageInstanceSetup
     Public FrmInstanceExport As PageInstanceExport
+    Public FrmInstanceBackup As PageInstanceBackup
+    Public FrmInstanceScreenshot As PageInstanceScreenshot
+    Public FrmInstanceDataPack As PageInstanceDataPack
     Public FrmDownloadModify As PageDownloadModify
 
     '资源信息分页声明

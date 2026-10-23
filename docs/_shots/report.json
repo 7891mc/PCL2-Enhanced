@@ -1,0 +1,184 @@
+{
+  "src": "index.html",
+  "url": "file:///home/user/Doubao/chats/38448600479576066/PCL2/docs/index.html",
+  "outdir": "/home/user/Doubao/chats/38448600479576066/PCL2/docs/_shots",
+  "include": [
+    "lint",
+    "screenshots",
+    "structure"
+  ],
+  "shots": {
+    "desktop": {
+      "revealed": 0,
+      "screenshot": "/home/user/Doubao/chats/38448600479576066/PCL2/docs/_shots/index_desktop.jpg",
+      "screenshotBytes": 197660,
+      "truncated": false,
+      "structure": {
+        "title": "PCL2-Enhanced — Plain Craft Launcher 2 增强版",
+        "firstH1": "更顺手的 PCL2 增强版",
+        "viewport": {
+          "w": 1440,
+          "h": 900
+        },
+        "fullpage": {
+          "w": 1440,
+          "h": 4749
+        },
+        "counts": {
+          "section": 5,
+          "h1": 1,
+          "h2": 5,
+          "img": 1,
+          "canvas": 0,
+          "svg": 3,
+          "links": 14,
+          "buttons": 1
+        }
+      },
+      "consoleErrors": [],
+      "consoleWarnings": [],
+      "horizontalOverflow": [],
+      "resourceErrors": [],
+      "localImageWarnings": [
+        {
+          "tag": "img",
+          "attr": "src",
+          "url": "file:///home/user/Doubao/chats/38448600479576066/PCL2/docs/assets/screenshot-version.png"
+        }
+      ],
+      "localImageHint": "含义：页面里存在 file:// 本地图片引用。云电脑交付的 HTML 不能包含文件系统引用。 | 修法：对每张图跑 `lark-cli drive +html-image-upload --file <图片路径>`，把返回里 data.url 的链接换进 <img src>；图片文件本身保留在 assets/ 里不要删。 | 豁免：本地电脑（Computer OS 为 Windows / Mac）不报此项——那里用 assets/ 相对路径引用是规定做法。本规则只匹配 file://，http(s)/data URI 都不会报。"
+    },
+    "mobile": {
+      "revealed": 0,
+      "slices": [
+        "/home/user/Doubao/chats/38448600479576066/PCL2/docs/_shots/index_mobile_p1of3.jpg",
+        "/home/user/Doubao/chats/38448600479576066/PCL2/docs/_shots/index_mobile_p2of3.jpg",
+        "/home/user/Doubao/chats/38448600479576066/PCL2/docs/_shots/index_mobile_p3of3.jpg"
+      ],
+      "sliceHint": "按顺序 Read slices 里的各分片。",
+      "truncated": false,
+      "structure": {
+        "title": "PCL2-Enhanced — Plain Craft Launcher 2 增强版",
+        "firstH1": "更顺手的 PCL2 增强版",
+        "viewport": {
+          "w": 390,
+          "h": 844
+        },
+        "fullpage": {
+          "w": 390,
+          "h": 8105
+        },
+        "counts": {
+          "section": 5,
+          "h1": 1,
+          "h2": 5,
+          "img": 1,
+          "canvas": 0,
+          "svg": 3,
+          "links": 14,
+          "buttons": 1
+        }
+      },
+      "consoleErrors": [],
+      "consoleWarnings": [],
+      "horizontalOverflow": [],
+      "resourceErrors": [],
+      "localImageWarnings": [
+        {
+          "tag": "img",
+          "attr": "src",
+          "url": "file:///home/user/Doubao/chats/38448600479576066/PCL2/docs/assets/screenshot-version.png"
+        }
+      ],
+      "localImageHint": "含义：页面里存在 file:// 本地图片引用。云电脑交付的 HTML 不能包含文件系统引用。 | 修法：对每张图跑 `lark-cli drive +html-image-upload --file <图片路径>`，把返回里 data.url 的链接换进 <img src>；图片文件本身保留在 assets/ 里不要删。 | 豁免：本地电脑（Computer OS 为 Windows / Mac）不报此项——那里用 assets/ 相对路径引用是规定做法。本规则只匹配 file://，http(s)/data URI 都不会报。"
+    }
+  },
+  "engine": "playwright",
+  "chromiumExec": "/opt/vm/preinstall/ms-playwright/chromium-1169/chrome-linux/chrome",
+  "elapsedSec": 6.65,
+  "schemaVersion": 2,
+  "status": "warning",
+  "engineInfo": {
+    "name": "playwright",
+    "degraded": false,
+    "degradedReasons": []
+  },
+  "input": {
+    "original": "index.html",
+    "resolvedPath": "/home/user/Doubao/chats/38448600479576066/PCL2/docs/index.html",
+    "baseUrl": "file:///home/user/Doubao/chats/38448600479576066/PCL2/docs/index.html",
+    "protocol": "file",
+    "cwd": "/home/user/Doubao/chats/38448600479576066/PCL2/docs",
+    "mediaMode": {
+      "reducedMotion": true
+    }
+  },
+  "artifacts": {
+    "screenshots": [
+      {
+        "viewport": "desktop",
+        "path": "/home/user/Doubao/chats/38448600479576066/PCL2/docs/_shots/index_desktop.jpg",
+        "size": 197660,
+        "visualCoverage": {
+          "complete": true,
+          "reason": null
+        }
+      },
+      {
+        "viewport": "mobile",
+        "tiles": [
+          "/home/user/Doubao/chats/38448600479576066/PCL2/docs/_shots/index_mobile_p1of3.jpg",
+          "/home/user/Doubao/chats/38448600479576066/PCL2/docs/_shots/index_mobile_p2of3.jpg",
+          "/home/user/Doubao/chats/38448600479576066/PCL2/docs/_shots/index_mobile_p3of3.jpg"
+        ],
+        "visualCoverage": {
+          "complete": true,
+          "reason": null
+        }
+      }
+    ]
+  },
+  "summary": {
+    "blocker": 0,
+    "error": 0,
+    "warning": 2,
+    "info": 0
+  },
+  "findings": [
+    {
+      "ruleId": "localImageWarnings",
+      "severity": "warning",
+      "kind": "publish",
+      "viewport": "desktop",
+      "selector": "img",
+      "evidence": {
+        "tag": "img",
+        "attr": "src",
+        "url": "file:///home/user/Doubao/chats/38448600479576066/PCL2/docs/assets/screenshot-version.png"
+      },
+      "dedupeKey": "localImageWarnings|desktop|img|0"
+    },
+    {
+      "ruleId": "localImageWarnings",
+      "severity": "warning",
+      "kind": "publish",
+      "viewport": "mobile",
+      "selector": "img",
+      "evidence": {
+        "tag": "img",
+        "attr": "src",
+        "url": "file:///home/user/Doubao/chats/38448600479576066/PCL2/docs/assets/screenshot-version.png"
+      },
+      "dedupeKey": "localImageWarnings|mobile|img|0"
+    }
+  ],
+  "prioritizedActions": [
+    {
+      "ruleId": "localImageWarnings",
+      "severity": "warning",
+      "viewport": "desktop",
+      "selector": "img"
+    }
+  ],
+  "reportPath": "/home/user/Doubao/chats/38448600479576066/PCL2/docs/_shots/report.json"
+}

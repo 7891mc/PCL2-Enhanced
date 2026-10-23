@@ -200,17 +200,20 @@ Public Module ModDownload
             Case 0
                 DlSourceLoader(Loader, New List(Of KeyValuePair(Of LoaderTask(Of String, DlClientListResult), Integer)) From {
                     New KeyValuePair(Of LoaderTask(Of String, DlClientListResult), Integer)(DlClientListBmclapiLoader, 30),
-                    New KeyValuePair(Of LoaderTask(Of String, DlClientListResult), Integer)(DlClientListMojangLoader, 30 + 60)
+                    New KeyValuePair(Of LoaderTask(Of String, DlClientListResult), Integer)(DlClientListMojangLoader, 30 + 60),
+                    New KeyValuePair(Of LoaderTask(Of String, DlClientListResult), Integer)(DlClientListMcArchiveLoader, 30 + 60 + 30)
                 }, Loader.IsForceRestarting)
             Case 1
                 DlSourceLoader(Loader, New List(Of KeyValuePair(Of LoaderTask(Of String, DlClientListResult), Integer)) From {
                     New KeyValuePair(Of LoaderTask(Of String, DlClientListResult), Integer)(DlClientListMojangLoader, 5),
-                    New KeyValuePair(Of LoaderTask(Of String, DlClientListResult), Integer)(DlClientListBmclapiLoader, 5 + 30)
+                    New KeyValuePair(Of LoaderTask(Of String, DlClientListResult), Integer)(DlClientListBmclapiLoader, 5 + 30),
+                    New KeyValuePair(Of LoaderTask(Of String, DlClientListResult), Integer)(DlClientListMcArchiveLoader, 5 + 30 + 30)
                 }, Loader.IsForceRestarting)
             Case Else
                 DlSourceLoader(Loader, New List(Of KeyValuePair(Of LoaderTask(Of String, DlClientListResult), Integer)) From {
                     New KeyValuePair(Of LoaderTask(Of String, DlClientListResult), Integer)(DlClientListMojangLoader, 60),
-                    New KeyValuePair(Of LoaderTask(Of String, DlClientListResult), Integer)(DlClientListBmclapiLoader, 60 + 60)
+                    New KeyValuePair(Of LoaderTask(Of String, DlClientListResult), Integer)(DlClientListBmclapiLoader, 60 + 60),
+                    New KeyValuePair(Of LoaderTask(Of String, DlClientListResult), Integer)(DlClientListMcArchiveLoader, 60 + 60 + 30)
                 }, Loader.IsForceRestarting)
         End Select
         '提取所有 Drop 序数
@@ -291,6 +294,40 @@ Public Module ModDownload
             Throw New Exception("Minecraft BMCLAPI 版本列表解析失败（" & Json.ToString & "）", ex)
         End Try
     End Sub
+
+    ''' <summary>
+    ''' Minecraft 客户端 版本列表，MC Archive 源加载器（兜底镜像，仅在前置源失败时尝试）。
+    ''' </summary>
+    Public DlClientListMcArchiveLoader As New LoaderTask(Of String, DlClientListResult)("DlClientList McArchive", AddressOf DlClientListMcArchiveMain)
+    Private Sub DlClientListMcArchiveMain(Loader As LoaderTask(Of String, DlClientListResult))
+        Dim JsonArray As JArray = NetRequestByClientRetry("https://mcarchive.net/api/v1/game_versions", RequireJson:=True).DeserializeJson()
+        Dim Json As New JObject
+        Dim Versions As New JArray
+        Dim LatestRelease As String = "", LatestSnapshot As String = ""
+        For Each Item As JObject In JsonArray
+            Dim Name As String = Item("name").ToString
+            If String.IsNullOrEmpty(Name) Then Continue For
+            Dim VType As String = GetMcArchiveType(Name)
+            Versions.Add(New JObject(New JProperty("id", Name), New JProperty("type", VType),
+                New JProperty("url", ""), New JProperty("time", ""), New JProperty("releaseTime", "")))
+            If VType = "release" Then LatestRelease = Name
+            If VType = "snapshot" Then LatestSnapshot = Name
+        Next
+        If Versions.Count < 200 Then Throw New Exception("MC Archive 版本列表长度不足（" & Versions.Count & "）")
+        Json("versions") = Versions
+        Json("latest") = New JObject(New JProperty("release", LatestRelease), New JProperty("snapshot", LatestSnapshot))
+        Loader.Output = New DlClientListResult With {.IsOfficial = False, .SourceName = "MC Archive", .Value = Json}
+    End Sub
+
+    ''' <summary>
+    ''' 根据版本名推断其在版本列表中的类型。
+    ''' </summary>
+    Private Function GetMcArchiveType(Name As String) As String
+        If Name.StartsWithF("a") Then Return "old_alpha"
+        If Name.StartsWithF("b") OrElse Name.StartsWithF("c") Then Return "old_beta"
+        If Name.Contains("-") OrElse Name.Contains("pre") OrElse Name.Contains("rc") OrElse Name.Contains("w") Then Return "snapshot"
+        Return "release"
+    End Function
 
     ''' <summary>
     ''' 获取某个版本的 Json 下载地址，若失败则返回 Nothing。必须在工作线程执行。

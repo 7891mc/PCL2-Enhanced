@@ -23,22 +23,25 @@
                             <RowDefinition Height="28" />
                         </Grid.RowDefinitions>
                         <TextBlock VerticalAlignment="Center" HorizontalAlignment="Left" Text="图标" Margin="0,0,25,0" />
-                        <local:MyComboBox Grid.Column="1" x:Name="ComboDisplayLogo">
-                            <local:MyComboBoxItem Content="自动" IsSelected="True" Tag="" />
-                            <local:MyComboBoxItem Content="自定义..." x:Name="ItemDisplayLogoCustom" Tag="PCL\Logo.png" />
-                            <local:MyComboBoxItem Content="圆石" Tag="pack://application:,,,/images/Blocks/CobbleStone.png" />
-                            <local:MyComboBoxItem Content="命令方块" Tag="pack://application:,,,/images/Blocks/CommandBlock.png" />
-                            <local:MyComboBoxItem Content="金块" Tag="pack://application:,,,/images/Blocks/GoldBlock.png" />
-                            <local:MyComboBoxItem Content="草方块" Tag="pack://application:,,,/images/Blocks/Grass.png" />
-                            <local:MyComboBoxItem Content="土径" Tag="pack://application:,,,/images/Blocks/GrassPath.png" />
-                            <local:MyComboBoxItem Content="铁砧" Tag="pack://application:,,,/images/Blocks/Anvil.png" />
-                            <local:MyComboBoxItem Content="红石块" Tag="pack://application:,,,/images/Blocks/RedstoneBlock.png" />
-                            <local:MyComboBoxItem Content="红石灯（开）" Tag="pack://application:,,,/images/Blocks/RedstoneLampOn.png" />
-                            <local:MyComboBoxItem Content="红石灯（关）" Tag="pack://application:,,,/images/Blocks/RedstoneLampOff.png" />
-                            <local:MyComboBoxItem Content="鸡蛋" Tag="pack://application:,,,/images/Blocks/Egg.png" />
-                            <local:MyComboBoxItem Content="布料（Fabric）" Tag="pack://application:,,,/images/Blocks/Fabric.png" />
-                            <local:MyComboBoxItem Content="狐狸（NeoForge）" Tag="pack://application:,,,/images/Blocks/NeoForge.png" />
-                        </local:MyComboBox>
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                            <local:MyComboBox x:Name="ComboDisplayLogo" Width="230">
+                                <local:MyComboBoxItem Content="自动" IsSelected="True" Tag="" />
+                                <local:MyComboBoxItem Content="自定义..." x:Name="ItemDisplayLogoCustom" Tag="PCL\Logo.png" />
+                                <local:MyComboBoxItem Content="圆石" Tag="pack://application:,,,/images/Blocks/CobbleStone.png" />
+                                <local:MyComboBoxItem Content="命令方块" Tag="pack://application:,,,/images/Blocks/CommandBlock.png" />
+                                <local:MyComboBoxItem Content="金块" Tag="pack://application:,,,/images/Blocks/GoldBlock.png" />
+                                <local:MyComboBoxItem Content="草方块" Tag="pack://application:,,,/images/Blocks/Grass.png" />
+                                <local:MyComboBoxItem Content="土径" Tag="pack://application:,,,/images/Blocks/GrassPath.png" />
+                                <local:MyComboBoxItem Content="铁砧" Tag="pack://application:,,,/images/Blocks/Anvil.png" />
+                                <local:MyComboBoxItem Content="红石块" Tag="pack://application:,,,/images/Blocks/RedstoneBlock.png" />
+                                <local:MyComboBoxItem Content="红石灯（开）" Tag="pack://application:,,,/images/Blocks/RedstoneLampOn.png" />
+                                <local:MyComboBoxItem Content="红石灯（关）" Tag="pack://application:,,,/images/Blocks/RedstoneLampOff.png" />
+                                <local:MyComboBoxItem Content="鸡蛋" Tag="pack://application:,,,/images/Blocks/Egg.png" />
+                                <local:MyComboBoxItem Content="布料（Fabric）" Tag="pack://application:,,,/images/Blocks/Fabric.png" />
+                                <local:MyComboBoxItem Content="狐狸（NeoForge）" Tag="pack://application:,,,/images/Blocks/NeoForge.png" />
+                            </local:MyComboBox>
+                            <local:MyButton Margin="12,0,0,0" Height="28" MinWidth="90" Text="生成图标" x:Name="BtnGenerateLogo" ToolTip="从当前登录玩家的皮肤面部生成实例图标" />
+                        </StackPanel>
                         <TextBlock VerticalAlignment="Center" Grid.Row="2" HorizontalAlignment="Left" Text="分类" Margin="0,0,25,0" />
                         <local:MyComboBox Grid.Column="1" Grid.Row="2" x:Name="ComboDisplayType">
                             <local:MyComboBoxItem Content="自动" IsSelected="True" />

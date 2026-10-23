@@ -1234,10 +1234,16 @@ Public Class FormMain
         DownloadDataPack = 4
         DownloadResourcePack = 5
         DownloadShader = 6
+        DownloadCart = 7
+        DownloadMap = 8
         SetupLaunch = 0
         SetupLink = 1
         SetupUI = 2
         SetupSystem = 3
+        SetupStorage = 4
+        SetupSkin = 5
+        SetupSkin = 5
+        SetupSkin = 5
         LinkMain = 0
         OtherHelp = 0
         OtherAbout = 1
@@ -1248,6 +1254,9 @@ Public Class FormMain
         InstanceMod = 3
         InstanceModDisabled = 4
         InstanceExport = 5
+        InstanceBackup = 6
+        InstanceScreenshot = 7
+        InstanceDataPack = 8
     End Enum
     ''' <summary>
     ''' 获取次级页面的名称。若并非次级页面则返回空字符串，故可以以此判断是否为次级页面。

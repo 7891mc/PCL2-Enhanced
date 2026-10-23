@@ -1,7 +1,11 @@
 Imports System.Windows.Markup
+Imports System.Windows.Threading
 
 <ContentProperty("SearchTags")>
 Public Class PageResource
+
+    ''' <summary>搜索防抖计时器：停止输入后自动搜索。</summary>
+    Private SearchDebounceTimer As New DispatcherTimer With {.Interval = TimeSpan.FromMilliseconds(450)}
 
 #Region "属性"
 
@@ -110,6 +114,11 @@ Public Class PageResource
         If IsFirstLoaded Then Return
         IsFirstLoaded = True
         CType(Parent, MyPageRight).PageLoaderInit(Load, PanLoad, PanContent, PanAlways, Loader, AddressOf Load_OnFinish, AddressOf LoaderInput)
+        SearchDebounceTimer.Stop()
+        AddHandler SearchDebounceTimer.Tick, Sub()
+            SearchDebounceTimer.Stop()
+            StartNewSearch()
+        End Sub
         '将最高 Drop 加入筛选
         If AllDrops IsNot Nothing AndAlso AllDrops.First > 250 Then
             Dim HighestVersion As String = McVersion.DropToVersion(AllDrops.First)
@@ -225,6 +234,15 @@ Public Class PageResource
         If Loader.ShouldStart(LoaderInput()) Then Storage = New ResourceSearcher.SearchResult '避免连续搜索两次导致 ProjectStorage 引用丢失（#1311）
         Loader.Start()
     End Sub
+    Private Sub SearchName_TextChanged() Handles TextSearchName.TextChanged
+        If Not SearchDebounceTimer.IsEnabled Then
+            SearchDebounceTimer.Start()
+        Else
+            SearchDebounceTimer.Stop()
+            SearchDebounceTimer.Start()
+        End If
+    End Sub
+
     Private Sub EnterTrigger(sender As Object, e As KeyEventArgs) Handles TextSearchName.KeyDown, TextSearchVersion.KeyDown
         If e.Key = Key.Enter Then StartNewSearch()
     End Sub
