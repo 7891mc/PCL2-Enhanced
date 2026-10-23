@@ -342,3 +342,5 @@ ASALocalRun/
 healthchecksdb
 
 MaskFiles/
+
+docs/_shots/
